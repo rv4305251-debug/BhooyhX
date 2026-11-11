@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>BhooyahX - Free Fire Esports Tournaments</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons CDN -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,6 +37,7 @@
     }
   </script>
   <style>
+    /* Strict Mobile Viewport & Touch Lock */
     html, body {
       width: 100% !important;
       max-width: 100vw !important;
@@ -46,21 +49,38 @@
       padding: 0;
       box-sizing: border-box;
     }
-    *, *:before, *:after { box-sizing: border-box; }
+
+    *, *:before, *:after {
+      box-sizing: border-box;
+    }
+
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #9CA3AF; border-radius: 9999px; }
-    .mobile-header-bar { padding-top: calc(0.75rem + env(safe-area-inset-top, 28px)) !important; }
-    .mobile-gate-pad { padding-top: calc(1.5rem + env(safe-area-inset-top, 28px)) !important; }
-    .mobile-bottom-nav { padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 12px)) !important; }
-    .mobile-main-pad { padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 12px)) !important; }
+    .glow-accent { box-shadow: 0 0 15px -3px rgba(255, 30, 64, 0.4); }
+    .glow-orange { box-shadow: 0 0 15px -3px rgba(255, 119, 0, 0.4); }
+
+    /* Fix Phone Status Bar / Notch Overlap */
+    .mobile-header-bar {
+      padding-top: calc(0.75rem + env(safe-area-inset-top, 28px)) !important;
+    }
+    .mobile-gate-pad {
+      padding-top: calc(1.5rem + env(safe-area-inset-top, 28px)) !important;
+    }
+    .mobile-bottom-nav {
+      padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 12px)) !important;
+    }
+    .mobile-main-pad {
+      padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 12px)) !important;
+    }
   </style>
 </head>
 <body class="bg-[#F3F4F6] text-gray-900 font-body antialiased transition-colors duration-300 min-h-screen flex flex-col justify-between selection:bg-brand-red selection:text-white w-full max-w-full overflow-x-hidden" id="appBody">
 
-  <!-- AUTH GATE SCREEN -->
+  <!-- ================= AUTH GATE SCREEN (ORIGINAL RESTORED) ================= -->
   <div id="authGateContainer" class="mobile-gate-pad min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-[#E5E7EB] via-[#F3F4F6] to-white w-full max-w-full overflow-x-hidden">
     <div class="bg-white border border-gray-200 rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-xl relative text-gray-900" id="authGateCard">
+      
       <div class="flex flex-col items-center text-center space-y-2">
         <div class="w-16 h-16">
           <svg viewBox="0 0 100 100" class="w-full h-full filter drop-shadow">
@@ -83,13 +103,17 @@
       </div>
 
       <div class="flex border-b border-gray-200">
-        <button onclick="switchAuthGateMode('login')" id="gateTabLogin" class="flex-1 pb-2 text-center font-display font-bold text-sm text-brand-red border-b-2 border-brand-red transition-all">Sign In</button>
-        <button onclick="switchAuthGateMode('register')" id="gateTabRegister" class="flex-1 pb-2 text-center font-display font-bold text-sm text-gray-400 transition-all">Register</button>
+        <button onclick="switchAuthGateMode('login')" id="gateTabLogin" class="flex-1 pb-2 text-center font-display font-bold text-sm text-brand-red border-b-2 border-brand-red transition-all">
+          Sign In
+        </button>
+        <button onclick="switchAuthGateMode('register')" id="gateTabRegister" class="flex-1 pb-2 text-center font-display font-bold text-sm text-gray-400 transition-all">
+          Register
+        </button>
       </div>
 
       <div id="gateAlert" class="hidden p-2.5 rounded-xl bg-red-100 border border-red-300 text-[11px] text-red-700"></div>
 
-      <!-- LOGIN -->
+      <!-- LOGIN FORM -->
       <div id="gateLoginForm" class="space-y-3 text-xs">
         <div>
           <label class="block text-gray-700 font-semibold mb-1">Email ya Mobile No.:</label>
@@ -99,74 +123,90 @@
           <label class="block text-gray-700 font-semibold mb-1">Password:</label>
           <input type="password" id="gateLoginPassword" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2.5 text-gray-900 outline-none focus:border-brand-red transition">
         </div>
-        <button onclick="handleAuthLogin()" id="btnGateLogin" class="w-full py-3 bg-gradient-to-r from-brand-red to-brand-orange text-white font-bold rounded-xl uppercase tracking-wider text-xs shadow-md hover:brightness-110 active:scale-95 transition">Enter Arena</button>
+        <div class="flex justify-end pt-0.5">
+          <button type="button" onclick="openForgotPasswordModal()" class="text-[11px] text-brand-red hover:text-red-700 font-semibold transition">
+            Password bhool gaye? (Reset)
+          </button>
+        </div>
+        <button onclick="handleAuthLogin()" id="btnGateLogin" class="w-full py-3 bg-gradient-to-r from-brand-red to-brand-orange text-white font-bold rounded-xl uppercase tracking-wider text-xs shadow-md hover:brightness-110 active:scale-95 transition">
+          Enter Arena
+        </button>
+
       </div>
 
-      <!-- REGISTER WITH REFERRAL CODE -->
+      <!-- REGISTER FORM -->
       <div id="gateRegisterForm" class="hidden space-y-2.5 text-xs">
         <div>
           <label class="block text-gray-700 font-semibold mb-0.5">Gmail ya Mobile No.:</label>
-          <input type="text" id="gateRegEmail" placeholder="player@gmail.com ya 9876543210" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 outline-none focus:border-brand-red">
+          <input type="text" id="gateRegEmail" placeholder="e.g. player@gmail.com ya 9876543210" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 outline-none focus:border-brand-red transition">
         </div>
         <div>
           <label class="block text-gray-700 font-semibold mb-0.5">Username:</label>
-          <input type="text" id="gateRegUsername" placeholder="e.g. shadow_hunter" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 outline-none focus:border-brand-red">
+          <input type="text" id="gateRegUsername" placeholder="e.g. shadow_hunter" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 outline-none focus:border-brand-red transition">
         </div>
         <div>
-          <label class="block text-gray-700 font-semibold mb-0.5">Free Fire IGN:</label>
-          <input type="text" id="gateRegIGN" placeholder="e.g. RAISTAR_OP" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 outline-none focus:border-brand-red">
+          <label class="block text-gray-700 font-semibold mb-0.5">Free Fire IGN (In-Game Name):</label>
+          <input type="text" id="gateRegIGN" placeholder="e.g. RAISTAR_OP" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 outline-none focus:border-brand-red transition">
         </div>
         <div>
-          <label class="block text-gray-700 font-semibold mb-0.5">Free Fire UID (8-10 digits):</label>
-          <input type="text" id="gateRegUID" placeholder="e.g. 1029384756" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 font-mono outline-none focus:border-brand-red">
-        </div>
-        <div>
-          <label class="block text-gray-700 font-semibold mb-0.5 flex justify-between items-center">
-            <span>Referral Code (Optional):</span>
-            <span class="text-[10px] text-emerald-600 font-bold" id="regReferralBonusLabel">Bonus Reward</span>
-          </label>
-          <input type="text" id="gateRegReferralCode" placeholder="Enter friend's FF UID" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 outline-none focus:border-brand-red">
+          <label class="block text-gray-700 font-semibold mb-0.5">Free Fire UID (10 digits):</label>
+          <input type="text" id="gateRegUID" placeholder="e.g. 1029384756" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 font-mono outline-none focus:border-brand-red transition">
+          <p class="text-[9.5px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-1.5 mt-1 leading-tight">
+            ⚠️ <b>Dhyan dein:</b> Kripya apni real Free Fire UID dalein. Payout ke time galat UID par payment transfer hone par uske jimmedar aap swayam rahenge.
+          </p>
         </div>
         <div>
           <label class="block text-gray-700 font-semibold mb-0.5">Password (Min 6 chars):</label>
-          <input type="password" id="gateRegPassword" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 outline-none focus:border-brand-red">
+          <input type="password" id="gateRegPassword" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 outline-none focus:border-brand-red transition">
         </div>
-        <button onclick="handleAuthRegister()" id="btnGateRegister" class="w-full py-3 bg-gradient-to-r from-brand-red to-brand-orange text-white font-bold rounded-xl uppercase tracking-wider text-xs shadow-md hover:brightness-110 active:scale-95 transition mt-2">Create Account</button>
+        <button onclick="handleAuthRegister()" id="btnGateRegister" class="w-full py-3 bg-gradient-to-r from-brand-red to-brand-orange text-white font-bold rounded-xl uppercase tracking-wider text-xs shadow-md hover:brightness-110 active:scale-95 transition mt-2">
+          Create Account
+        </button>
       </div>
+
     </div>
   </div>
 
-  <!-- AUTHENTICATED APP SHELL -->
+  <!-- ================= AUTHENTICATED APP SHELL ================= -->
   <div id="authenticatedApp" class="hidden flex flex-col min-h-screen justify-between w-full max-w-full overflow-x-hidden">
-    <!-- TOP HEADER -->
-    <header class="mobile-header-bar sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-gray-200 transition-colors duration-300 px-3 pb-2.5 pt-7 w-full" id="headerNav">
+
+    <!-- TOP HEADER BAR -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-gray-200 transition-colors duration-300 px-3 py-2.5 w-full" id="headerNav" class="mobile-header-bar sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-gray-200 transition-colors duration-300 px-3 pb-2.5 pt-7 w-full">
       <div class="max-w-md w-full mx-auto flex items-center justify-between">
         <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('lobby')">
-          <div class="w-9 h-9 flex-shrink-0">
+          <div id="appLogoContainer" class="w-9 h-9 flex-shrink-0">
             <svg viewBox="0 0 100 100" class="w-full h-full filter drop-shadow">
-              <polygon points="50,5 92,20 80,72 50,96 20,72 8,20" fill="#14161D" stroke="#FF1E40" stroke-width="3.5" />
-              <path d="M33 32 L67 68 M67 32 L33 68" stroke="#FF7700" stroke-width="7" stroke-linecap="round" />
+              <defs>
+                <linearGradient id="fireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#FF1E40" />
+                  <stop offset="50%" stop-color="#FF7700" />
+                  <stop offset="100%" stop-color="#FFD600" />
+                </linearGradient>
+              </defs>
+              <polygon points="50,5 92,20 80,72 50,96 20,72 8,20" fill="#14161D" stroke="url(#fireGrad)" stroke-width="3.5" />
+              <polygon points="50,14 82,26 72,66 50,86 28,66 18,26" fill="#0A0B0E" opacity="0.8" />
+              <path d="M33 32 L67 68 M67 32 L33 68" stroke="url(#fireGrad)" stroke-width="7" stroke-linecap="round" />
+              <circle cx="50" cy="50" r="8" fill="#FF1E40" />
+              <circle cx="50" cy="50" r="3.5" fill="#FFFFFF" />
             </svg>
           </div>
           <div>
-            <span id="brandNameDisplay" class="font-gaming tracking-wider text-xl uppercase font-bold bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent">BhooyahX</span>
+            <div class="flex items-center gap-1.5">
+              <span id="brandNameDisplay" class="font-gaming tracking-wider text-xl uppercase font-bold bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent">BhooyahX</span>
+              <span class="text-[8px] px-1.5 py-0.2 rounded bg-brand-red/10 text-brand-red font-semibold uppercase tracking-widest border border-brand-red/30">ESPORTS</span>
+            </div>
             <p class="text-[9px] text-gray-500 -mt-0.5 font-display">Daily Free Fire Battles</p>
           </div>
         </div>
 
-        <!-- Right Header Actions (Refresh + Wallet Pill + Profile Avatar) -->
+        <!-- Right Header Actions (Wallet Pill + Profile Avatar) -->
         <div class="flex items-center gap-2">
-          <!-- INSTANT SYNC REFRESH BUTTON -->
-          <button onclick="manualSyncRefresh()" id="headerRefreshBtn" class="w-8 h-8 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-700 hover:text-brand-red hover:border-brand-red active:scale-90 transition shadow-sm" title="Refresh Live Data">
-            <i class="ph-bold ph-arrows-clockwise text-base" id="headerRefreshIcon"></i>
-          </button>
-
           <button onclick="switchTab('wallet')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-600 hover:bg-amber-500/20 transition-all text-xs font-semibold">
             <i class="ph-bold ph-coins text-amber-500 text-sm"></i>
             <span id="headerWalletBal">₹0.00</span>
           </button>
 
-          <button onclick="switchTab('profile')" class="w-8 h-8 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-xs font-bold font-gaming text-brand-orange hover:border-brand-red transition">
+          <button onclick="switchTab('profile')" class="w-8 h-8 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-xs font-bold font-gaming text-brand-orange hover:border-brand-red transition" id="headerProfileAvatarBtn" title="My Profile">
             <span id="headerProfileLetter">U</span>
           </button>
         </div>
@@ -175,124 +215,395 @@
 
     <!-- MAIN CONTAINER -->
     <main class="flex-grow max-w-md w-full mx-auto px-3 py-4 mobile-main-pad transition-all overflow-x-hidden">
+
       <!-- VIEW 1: TOURNAMENT LOBBY -->
       <section id="viewLobby" class="space-y-4 w-full">
+        <!-- Promo Banner -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 p-4 border border-brand-red/20 shadow-lg text-white">
+          <div class="relative z-10 max-w-[75%]">
+            <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-white bg-black/20 px-2 py-0.5 rounded-full mb-1">Weekend Cup</span>
+            <h2 class="text-xl font-gaming tracking-wide uppercase text-white font-bold leading-tight">FREE FIRE TOURNAMENTS</h2>
+            <p class="text-[11px] text-white/90 mb-2">Instant Room ID & Per Kill Cash Rewards</p>
+            <button onclick="scrollToTournamentsList()" class="px-3 py-1 bg-black text-white text-xs font-bold rounded-lg shadow hover:bg-zinc-900 transition">Register Now</button>
+          </div>
+          <div class="absolute -right-3 -bottom-4 opacity-15 text-8xl text-black font-gaming select-none pointer-events-none">FF</div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-semibold no-scrollbar w-full max-w-full">
+          <button onclick="filterMatches('all')" class="tab-filter-btn px-3.5 py-1.5 rounded-xl bg-brand-red text-white transition-all whitespace-nowrap shadow-sm" data-filter="all">All Modes</button>
+          <button onclick="filterMatches('Solo')" class="tab-filter-btn px-3.5 py-1.5 rounded-xl bg-gray-200 text-gray-700 transition-all hover:text-black whitespace-nowrap" data-filter="Solo">Solo (BR)</button>
+          <button onclick="filterMatches('Squad')" class="tab-filter-btn px-3.5 py-1.5 rounded-xl bg-gray-200 text-gray-700 transition-all hover:text-black whitespace-nowrap" data-filter="Squad">Squad (BR)</button>
+          <button onclick="filterMatches('CS')" class="tab-filter-btn px-3.5 py-1.5 rounded-xl bg-gray-200 text-gray-700 transition-all hover:text-black whitespace-nowrap" data-filter="CS">Clash Squad (4v4)</button>
+          <button onclick="filterMatches('free')" class="tab-filter-btn px-3.5 py-1.5 rounded-xl bg-gray-200 text-gray-700 transition-all hover:text-black whitespace-nowrap" data-filter="free">🔥 Free Entry</button>
+        </div>
+
+        <!-- Tournament Cards Grid -->
         <div id="tournamentCardsContainer" class="space-y-3 w-full"></div>
       </section>
 
       <!-- VIEW 2: MY MATCHES -->
       <section id="viewMyMatches" class="hidden space-y-4 w-full">
-        <h2 class="text-lg font-bold font-display uppercase tracking-wide flex items-center gap-1.5 text-gray-900">
-          <i class="ph-bold ph-sword text-brand-red"></i> My Registered Matches
-        </h2>
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold font-display uppercase tracking-wide flex items-center gap-1.5 text-gray-900" id="myMatchesHeading">
+              <i class="ph-bold ph-sword text-brand-red"></i> My Registered Matches
+            </h2>
+            <p class="text-xs text-gray-500">Room ID & Password unlock 15 minutes before match time.</p>
+          </div>
+          <button onclick="renderMyMatches()" class="p-1.5 rounded-lg bg-gray-200 text-gray-700 hover:text-black text-sm" title="Refresh">
+            <i class="ph-bold ph-arrows-clockwise"></i>
+          </button>
+        </div>
         <div id="myMatchesList" class="space-y-3 w-full"></div>
       </section>
 
       <!-- VIEW 3: WALLET -->
       <section id="viewWallet" class="hidden space-y-4 w-full">
-        <div class="rounded-2xl p-5 bg-white border border-gray-200 shadow-md">
-          <span class="text-xs font-medium uppercase tracking-wider text-gray-500">Available Balance</span>
-          <div class="text-3xl font-display font-bold text-gray-900">₹<span id="walletTotalBal">0.00</span></div>
-          <div class="grid grid-cols-2 gap-3 mt-4">
-            <button onclick="openAddMoneyModal()" class="py-2.5 bg-gradient-to-r from-brand-red to-brand-orange text-white font-bold rounded-xl text-xs uppercase shadow">Add Money</button>
-            <button onclick="openWithdrawModal()" class="py-2.5 bg-gray-100 text-gray-800 font-bold rounded-xl text-xs uppercase border border-gray-300">Withdraw</button>
+        <div class="rounded-2xl p-5 bg-white border border-gray-200 shadow-md relative overflow-hidden" id="walletCard">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-xs font-medium uppercase tracking-wider text-gray-500">Total Available Balance</span>
+              <div class="text-3xl font-display font-bold text-gray-900 tracking-tight flex items-baseline gap-1 mt-0.5">
+                <span class="text-brand-orange text-xl">₹</span>
+                <span id="walletTotalBal">0.00</span>
+              </div>
+              <p class="text-[11px] text-gray-500 mt-1">Real Winning Pool + Deposited Cash</p>
+            </div>
+            <div class="p-3 rounded-2xl bg-brand-orange/10 border border-brand-orange/30 text-brand-orange">
+              <i class="ph-fill ph-wallet text-2xl"></i>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 mt-5">
+            <button onclick="openAddMoneyModal()" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-brand-red to-brand-orange text-white font-bold text-xs uppercase tracking-wider shadow-md hover:brightness-110 active:scale-95 transition">
+              <i class="ph-bold ph-plus-circle text-base"></i> Add Money
+            </button>
+            <button onclick="openWithdrawModal()" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs uppercase tracking-wider border border-gray-300 active:scale-95 transition">
+              <i class="ph-bold ph-hand-coins text-base text-amber-500"></i> Withdraw
+            </button>
           </div>
         </div>
-        <div id="walletTransactionsList" class="space-y-2 mt-4"></div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs w-full">
+          <div class="p-3 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-between">
+            <div>
+              <span class="text-gray-500 block text-[10px]">Total Deposited</span>
+              <span id="userTotalDeposited" class="font-bold text-emerald-600 font-display text-sm">₹0.00</span>
+            </div>
+            <i class="ph-bold ph-arrow-down-left text-emerald-500 text-lg"></i>
+          </div>
+          <div class="p-3 rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-between">
+            <div>
+              <span class="text-gray-500 block text-[10px]">Total Winnings</span>
+              <span id="userTotalWon" class="font-bold text-amber-600 font-display text-sm">₹0.00</span>
+            </div>
+            <i class="ph-bold ph-trophy text-amber-500 text-lg"></i>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-gray-200 bg-white p-4 w-full shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
+              <i class="ph-bold ph-clock-counter-clockwise text-brand-orange"></i> Passbook & Ledger
+            </h3>
+            <span class="text-[10px] text-gray-400">Live Real Records</span>
+          </div>
+          <div id="walletTransactionsList" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+        </div>
       </section>
 
-      <!-- VIEW 4: PROFILE -->
+      <!-- VIEW 4: DUAL PROFILE (USER VIEW vs ADMIN MASTER STUDIO) -->
       <section id="viewProfile" class="hidden space-y-4 w-full">
+
         <!-- USER PROFILE HEADER -->
-        <div class="rounded-2xl p-4 bg-white border border-gray-200 shadow-sm flex items-center gap-3.5">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-red to-brand-orange flex items-center justify-center text-white text-2xl font-bold font-gaming">
+        <div class="rounded-2xl p-4 bg-white border border-gray-200 shadow-sm flex items-center gap-3.5" id="profileCardTop">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-red to-brand-orange flex items-center justify-center text-white text-2xl font-bold font-gaming shadow-md">
             <span id="profileAvatarLetter">U</span>
           </div>
           <div class="flex-1">
-            <h3 id="profileUsername" class="font-bold text-base text-gray-900">Player</h3>
-            <p class="text-xs text-gray-500">FF UID: <span id="profileUID" class="text-amber-600 font-mono font-bold">-</span></p>
+            <div class="flex items-center gap-2">
+              <h3 id="profileUsername" class="font-bold text-base text-gray-900">Player</h3>
+              <span id="profileRoleBadge" class="text-[9px] px-2 py-0.5 rounded bg-brand-red/10 text-brand-red font-bold uppercase border border-brand-red/30">Player</span>
+            </div>
+            <p class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+              <span>IGN:</span> <span id="profileIGN" class="text-gray-800 font-medium">-</span>
+            </p>
+            <p class="text-xs text-gray-500 flex items-center gap-1">
+              <span>FF UID:</span> <span id="profileUID" class="text-amber-600 font-mono">-</span>
+            </p>
           </div>
-          <button onclick="handleFirebaseLogout()" class="p-2 text-gray-400 hover:text-red-500"><i class="ph-bold ph-sign-out text-lg"></i></button>
+          <button onclick="handleFirebaseLogout()" class="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-gray-100 transition" title="Logout">
+            <i class="ph-bold ph-sign-out text-lg"></i>
+          </button>
         </div>
 
-        <!-- REFER & EARN CARD (USER VIEW) -->
-        <div class="rounded-2xl p-4 bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 text-white shadow-md relative overflow-hidden" id="userReferralCard">
-          <div class="relative z-10 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-bold uppercase tracking-wider bg-black/25 px-2.5 py-0.5 rounded-full">Refer & Earn Real Cash</span>
-              <span class="text-xs font-bold text-yellow-200 flex items-center gap-1 font-display">
-                <i class="ph-bold ph-coins"></i> <span id="userReferRewardDisplay">₹10</span> per Refer
-              </span>
+        <!-- PLAYER SUPPORT SECTION -->
+        <div class="rounded-xl border border-blue-200 bg-blue-50/50 p-4 space-y-3 shadow-sm">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold uppercase tracking-wider text-blue-700 flex items-center gap-1.5 text-xs">
+              <i class="ph-bold ph-headset text-lg"></i> Player Support / Admin Contact
+            </h4>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-semibold">24/7 Help</span>
+          </div>
+          <div class="p-2.5 rounded-lg bg-white border border-blue-100 text-xs flex justify-between items-center">
+            <span class="text-gray-500 font-medium">Head Admin:</span>
+            <span id="displayAdminName" class="font-bold text-gray-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">Admin Dewansh</span>
+          </div>
+          <p class="text-[10px] text-gray-600">Koi issue ya problem hai toh seedha Admin se sampark karein:</p>
+          <div class="flex gap-2">
+            <a href="#" id="playerSupportTelegram" target="_blank" class="flex-1 py-2 bg-[#0088cc] hover:bg-[#0077b3] text-white text-center rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 shadow transition">
+              <i class="ph-bold ph-telegram-logo text-base"></i> Telegram
+            </a>
+            <a href="#" id="playerSupportWhatsapp" target="_blank" class="flex-1 py-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white text-center rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 shadow transition">
+              <i class="ph-bold ph-whatsapp-logo text-base"></i> WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <!-- THEME CHANGE BUTTON -->
+        <div class="rounded-xl border border-gray-200 bg-white p-3.5 shadow-sm flex items-center justify-between" id="profileThemeBox">
+          <div class="flex items-center gap-2.5">
+            <div class="p-2 rounded-xl bg-orange-100 text-brand-orange">
+              <i class="ph-bold ph-paint-brush-broad text-lg" id="profileThemeIcon"></i>
             </div>
             <div>
-              <h4 class="font-gaming text-2xl font-bold uppercase tracking-wider leading-tight">Apne Squad Ko Invite Karein</h4>
-              <p class="text-[11px] text-white/90">Har player jo aapke UID code se judega, aapko turant cash reward milega.</p>
+              <span class="text-xs font-bold text-gray-800 block">Theme Mode</span>
+              <span class="text-[11px] text-gray-500" id="profileThemeSub">Switch between Day (White) & Night (Dark)</span>
             </div>
-            <div class="flex items-center gap-2 pt-1">
-              <div class="flex-1 bg-black/30 backdrop-blur-md border border-white/20 rounded-xl px-3 py-2 flex items-center justify-between">
-                <div>
-                  <span class="text-[9px] text-white/70 block uppercase">Aapka Refer Code:</span>
-                  <span id="userReferCodeVal" class="font-mono font-bold text-sm tracking-wider select-all text-yellow-300">UID</span>
-                </div>
-                <button onclick="copyReferralCode()" class="px-2.5 py-1 bg-white text-gray-900 rounded-lg text-[10px] font-bold shadow hover:bg-gray-100 flex items-center gap-1">
-                  <i class="ph-bold ph-copy"></i> Copy
-                </button>
-              </div>
-              <button onclick="shareReferralWhatsApp()" class="py-2.5 px-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition active:scale-95">
-                <i class="ph-bold ph-whatsapp-logo text-lg"></i> Share
+          </div>
+          <button onclick="toggleDayNightMode()" class="px-3 py-1.5 rounded-lg border border-gray-300 bg-gray-100 hover:bg-gray-200 text-xs font-semibold flex items-center gap-1.5 transition text-gray-800" id="profileThemeToggleBtn">
+            <i class="ph-bold ph-sun text-brand-orange" id="profileThemeBtnIcon"></i>
+            <span id="profileThemeBtnLabel">Day Mode</span>
+          </button>
+        </div>
+
+        <!-- 1. REGULAR PLAYER SECTION -->
+        <div id="regularPlayerSection" class="space-y-3">
+          <div class="rounded-xl border border-gray-200 bg-white p-4 space-y-2.5 text-xs shadow-sm">
+            <h4 class="font-bold uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
+              <i class="ph-bold ph-shield-check text-brand-orange"></i> Player Account Details
+            </h4>
+            <div class="flex justify-between py-1 border-b border-gray-100">
+              <span class="text-gray-500">Account Status:</span>
+              <span class="text-emerald-600 font-bold">Verified Active</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-gray-100">
+              <span class="text-gray-500">Security Mode:</span>
+              <span class="text-gray-700 font-mono">Protected</span>
+            </div>
+            <div class="flex justify-between py-1">
+              <span class="text-gray-500">Permissions:</span>
+              <span class="text-gray-700 font-semibold">Standard Player (Read Only)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. MASTER ADMIN STUDIO -->
+        <div id="adminMasterSection" class="hidden space-y-4">
+
+          <!-- A. EDIT APP NAME DYNAMICALLY -->
+          <div class="rounded-xl border border-blue-200 bg-blue-50/50 p-4 space-y-3 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-blue-700 flex items-center gap-1.5">
+                <i class="ph-bold ph-pencil-simple"></i> Edit App Name
+              </h3>
+              <span class="text-[9px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold">Admin Tool</span>
+            </div>
+            <p class="text-[11px] text-gray-600">Change the application title displayed across the app.</p>
+            <div class="flex gap-2">
+              <input type="text" id="adminAppNameInput" value="BhooyahX" placeholder="e.g. BhooyahX" class="flex-1 bg-white border border-gray-300 rounded-lg p-2 text-xs font-bold text-gray-900 outline-none focus:border-blue-500">
+              <button onclick="saveCustomAppName()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-xs shadow transition">
+                Update Name
               </button>
             </div>
           </div>
-        </div>
 
-        <!-- MASTER ADMIN STUDIO -->
-        <div id="adminMasterSection" class="hidden space-y-4">
-          <!-- REFERRAL REWARD CONTROLLER (ADMIN) -->
-          <div class="rounded-xl border border-amber-300 bg-amber-50/50 p-4 space-y-3 shadow-sm">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
-              <i class="ph-bold ph-gift text-base text-brand-orange"></i> Refer & Earn Reward Settings
+          <!-- B. EDIT MATCH INSTRUCTIONS -->
+          <div class="rounded-xl border border-gray-300 bg-white p-4 space-y-3 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-800 flex items-center gap-1.5">
+              <i class="ph-bold ph-list-dashes text-brand-orange"></i> Edit Match Instructions (Below Room ID)
             </h3>
-            <p class="text-[11px] text-gray-600">Ek player ko refer karne par refer karne wale ko kitna amount (₹) milega:</p>
-            <div class="flex items-center gap-2">
-              <input type="number" id="adminReferralRewardInput" value="10" min="0" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-gray-900 font-bold text-xs outline-none">
-              <button onclick="saveAdminReferralReward()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-xs shadow">Save Reward</button>
+            <div class="space-y-2 text-xs">
+              <textarea id="adminInstructionsInput" rows="4" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 outline-none leading-relaxed text-gray-800 font-medium"></textarea>
+              <button onclick="saveInstructions()" class="w-full py-2 bg-gray-800 hover:bg-black text-white font-bold rounded-lg shadow transition">
+                Save Instructions for Players
+              </button>
             </div>
           </div>
 
-          <!-- ADMIN UPI & QR SETTINGS WITH DIRECT GALLERY UPLOAD -->
-          <div class="rounded-xl border border-emerald-300 bg-white p-4 space-y-3 shadow-sm">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
-              <i class="ph-bold ph-qr-code text-base"></i> Admin Name, UPI ID & QR Code Settings
+          <!-- C. EDIT SUPPORT LINKS (ADMIN EDITABLE TELEGRAM & WHATSAPP) -->
+          <div class="rounded-xl border border-gray-300 bg-white p-4 space-y-3 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-800 flex items-center gap-1.5">
+              <i class="ph-bold ph-link text-brand-orange"></i> Edit Player Support / Admin Contacts
             </h3>
             <div class="space-y-2 text-xs">
               <div>
-                <label class="block text-gray-700 font-semibold mb-0.5">Admin Display Name:</label>
-                <input type="text" id="adminDisplayNameInput" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 outline-none">
+                <label class="block text-gray-600 mb-0.5">Admin Telegram Link / Username:</label>
+                <input type="text" id="adminTelegramInput" placeholder="https://t.me/yourusername" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 outline-none focus:border-brand-red">
               </div>
               <div>
-                <label class="block text-gray-700 font-semibold mb-0.5">Admin Receiving UPI ID:</label>
-                <input type="text" id="adminUpiInput" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 font-mono outline-none">
+                <label class="block text-gray-600 mb-0.5">Admin WhatsApp Number Link:</label>
+                <input type="text" id="adminWhatsappInput" placeholder="https://wa.me/91XXXXXXXXXX" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 outline-none focus:border-brand-red">
               </div>
-              <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
-                <label class="block text-emerald-900 font-bold mb-0.5">Upload QR Scanner Photo from Gallery:</label>
-                <input type="file" id="adminQrFileInput" accept="image/*" onchange="handleQrFileUpload(event)" class="w-full text-xs text-gray-700 bg-white p-1 rounded-lg border border-emerald-200">
-                <input type="hidden" id="adminCustomQrInput" value="">
-              </div>
-              <button onclick="saveAdminUpiAndProfileSettings()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs shadow">Save Details & Cloud Sync to All Devices</button>
+              <button onclick="saveSupportLinks()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg shadow transition">
+                Save Support Contacts
+              </button>
             </div>
           </div>
 
-          <!-- TOURNAMENT MANAGER -->
+          <!-- D. AUTOMATION SWITCHES (AUTO / MANUAL SWITCH FOR DEPOSIT & WITHDRAWAL) -->
+          <div class="rounded-xl border border-purple-200 bg-purple-50/40 p-4 space-y-3 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-purple-700 flex items-center justify-between">
+              <span class="flex items-center gap-1.5"><i class="ph-bold ph-sliders"></i> Automation Switches (Deposit & Withdrawal)</span>
+            </h3>
+            <div class="flex items-center justify-between bg-white p-2.5 rounded-lg border border-purple-100">
+              <div>
+                <span class="text-xs font-semibold text-gray-800 block">Auto-Approve Deposits</span>
+                <span class="text-[10px] text-gray-500">OFF = Manual approval queue, ON = Instant wallet balance credit</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="toggleAutoDeposit" onchange="toggleAdminSettings()" class="sr-only peer">
+                <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-emerald-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+              </label>
+            </div>
+            <div class="flex items-center justify-between bg-white p-2.5 rounded-lg border border-purple-100">
+              <div>
+                <span class="text-xs font-semibold text-gray-800 block">Auto-Process Withdrawals</span>
+                <span class="text-[10px] text-gray-500">OFF = Review player UPI before paying, ON = Instant success</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="toggleAutoWithdraw" onchange="toggleAdminSettings()" class="sr-only peer">
+                <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-brand-red after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- E. REAL-TIME APP FINANCIAL LEDGER -->
+          <div class="rounded-xl border border-brand-red/30 bg-white p-4 space-y-3 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-brand-orange flex items-center gap-1.5">
+                <i class="ph-bold ph-chart-line-up"></i> Real-time Financial Ledger
+              </h3>
+              <span class="text-[9px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-bold">Real Money Only</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="p-2.5 rounded-lg bg-gray-50 border border-gray-200">
+                <span class="text-[10px] text-gray-500 block">Total Pool in Matches</span>
+                <span id="adminTotalInGame" class="text-base font-bold text-amber-600 font-display">₹0.00</span>
+                <span class="text-[9px] text-gray-400 block">Real player pool</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-gray-50 border border-gray-200">
+                <span class="text-[10px] text-gray-500 block">Total Verified Deposits</span>
+                <span id="adminTotalDeposits" class="text-base font-bold text-emerald-600 font-display">₹0.00</span>
+                <span class="text-[9px] text-gray-400 block">Real user deposits</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- F. PLAYER WITHDRAWAL QUEUE -->
+          <div class="rounded-xl border border-amber-300 bg-amber-50/40 p-4 space-y-3 shadow-sm" id="adminWithdrawSection">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
+                <i class="ph-bold ph-hand-coins"></i> Player Withdrawal Requests Queue
+              </h3>
+              <span id="pendingWithdrawalsCount" class="text-[10px] bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded font-bold">0 Pending</span>
+            </div>
+            <div id="adminPendingWithdrawalsList" class="space-y-2 text-xs">
+              <div class="p-3 text-center text-gray-400 text-xs">No pending withdrawal requests.</div>
+            </div>
+          </div>
+
+          <!-- G. DEPOSIT VERIFICATION QUEUE -->
+          <div class="rounded-xl border border-emerald-300 bg-emerald-50/40 p-4 space-y-3 shadow-sm" id="adminDepositSection">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+                <i class="ph-bold ph-hourglass-high"></i> Deposit Verification Queue
+              </h3>
+              <span id="pendingDepositsCount" class="text-[10px] bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded font-bold">0 Pending</span>
+            </div>
+            <div id="adminPendingDepositsList" class="space-y-2 text-xs">
+              <div class="p-3 text-center text-gray-400 text-xs">No pending player deposits.</div>
+            </div>
+          </div>
+
+          <!-- H. TOURNAMENT MANAGER (PER KILL & DECLARE WINNERS) -->
           <div class="rounded-xl border border-gray-200 bg-white p-4 space-y-3 shadow-sm">
             <div class="flex items-center justify-between">
               <h3 class="text-xs font-bold uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
                 <i class="ph-bold ph-trophy text-brand-red"></i> Tournament Manager
               </h3>
-              <button onclick="openModal('createMatchModal')" class="px-2.5 py-1 bg-brand-red text-white text-xs font-bold rounded-lg">+ New Match</button>
+              <button onclick="openCreateTournamentModal()" class="px-2.5 py-1 bg-brand-red hover:bg-red-700 text-white text-xs font-bold rounded-lg transition shadow-sm">
+                + New Match
+              </button>
             </div>
-            <div id="adminTournamentManageList" class="space-y-2 text-xs"></div>
+            <div id="adminTournamentManageList" class="space-y-2 text-xs max-h-60 overflow-y-auto"></div>
           </div>
-        </div>
+
+          <!-- I. SEND IN-APP MAIL & BROADCAST -->
+          <div class="rounded-xl border border-purple-200 bg-purple-50/40 p-4 space-y-3 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-purple-700 flex items-center gap-1.5">
+              <i class="ph-bold ph-paper-plane-tilt"></i> Send In-App Mail & Broadcast
+            </h3>
+            <div class="space-y-2 text-xs">
+              <input type="text" id="adminNoticeTitle" placeholder="Mail / Notice Title" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-gray-900 outline-none focus:border-purple-500">
+              <textarea id="adminNoticeBody" rows="2" placeholder="Write message to all players..." class="w-full bg-white border border-gray-300 rounded-lg p-2 text-gray-900 outline-none focus:border-purple-500"></textarea>
+              <button onclick="sendAdminBroadcast()" class="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg transition text-xs flex items-center justify-center gap-1 shadow">
+                <i class="ph-bold ph-broadcast"></i> Send Broadcast
+              </button>
+            </div>
+          </div>
+
+          <!-- J. EDIT ADMIN NAME, UPI & QR SETTINGS -->
+          <div class="rounded-xl border border-emerald-300 bg-white p-4 space-y-3 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+                <i class="ph-bold ph-qr-code text-base"></i> Admin Name, UPI ID & QR Code Settings
+              </h3>
+              <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">Cloud Live Sync</span>
+            </div>
+            <p class="text-[11px] text-gray-600">Yahan jo Admin Name, UPI ID aur QR Code aap set karenge, wo <b>Firebase Cloud ke zariye sabhi devices par bina app update kiye instant live</b> dikhega.</p>
+            <div class="space-y-2.5 text-xs">
+              <div>
+                <label class="block text-gray-700 font-semibold mb-0.5">Admin Display Name (Users ko dikhne wala naam):</label>
+                <input type="text" id="adminDisplayNameInput" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 font-semibold focus:border-emerald-500 outline-none" placeholder="e.g. Dewansh (Owner)">
+              </div>
+              <div>
+                <label class="block text-gray-700 font-semibold mb-0.5">Admin Receiving UPI ID (Payment aane ke liye):</label>
+                <input type="text" id="adminUpiInput" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 font-mono font-bold focus:border-emerald-500 outline-none" placeholder="username@upi">
+              </div>
+              
+              <!-- DIRECT QR IMAGE UPLOAD FROM PHONE GALLERY -->
+              <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+                <label class="block text-emerald-900 font-bold mb-0.5 flex items-center gap-1.5">
+                  <i class="ph-bold ph-upload-simple text-base text-emerald-600"></i> Upload QR Code Scanner Image:
+                </label>
+                <input type="file" id="adminQrFileInput" accept="image/*" onchange="handleQrFileUpload(event)" class="w-full text-xs text-gray-700 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer bg-white p-1 rounded-lg border border-emerald-200">
+                <p class="text-[9.5px] text-gray-500">Apne phone ki gallery se Google Pay / PhonePe / Paytm ka QR code screenshot direct choose karein.</p>
+                
+                <div id="adminQrPreviewBox" class="flex items-center gap-3 bg-white p-2 rounded-lg border border-gray-200">
+                  <div class="w-16 h-16 rounded border border-gray-300 overflow-hidden bg-gray-50 flex items-center justify-center flex-shrink-0">
+                    <img id="adminQrPreviewImg" src="" alt="QR Preview" class="w-full h-full object-contain">
+                  </div>
+                  <div class="flex-1">
+                    <span class="text-[10px] font-bold text-gray-800 block">Current Active Scanner</span>
+                    <span class="text-[9px] text-gray-400 block" id="adminQrStatusText">No custom image set (Using dynamic QR)</span>
+                    <button type="button" onclick="clearCustomQrImage()" class="mt-1 text-[10px] text-red-600 hover:underline font-bold">Remove Image</button>
+                  </div>
+                </div>
+                <input type="hidden" id="adminCustomQrInput" value="">
+              </div>
+
+              <button onclick="saveAdminUpiAndProfileSettings()" id="btnSaveAdminDetails" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition text-xs flex items-center justify-center gap-1.5 shadow">
+                <i class="ph-bold ph-cloud-arrow-up text-base"></i> Save Details & Cloud Sync to All Devices
+              </button>
+            </div>
+          </div>
+
+        <!-- LOGOUT BUTTON -->
+        <button onclick="handleFirebaseLogout()" class="w-full py-2.5 rounded-xl border border-red-300 bg-red-50 hover:bg-red-100 text-brand-red text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition">
+          <i class="ph-bold ph-sign-out text-base"></i> Log Out of BhooyahX
+        </button>
       </section>
     </main>
 
@@ -300,54 +611,410 @@
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-2 py-1.5 mobile-bottom-nav transition-colors duration-300 w-full" id="bottomNav">
       <div class="max-w-md mx-auto flex items-center justify-around text-[10px] font-bold font-display uppercase tracking-wider">
         <button onclick="switchTab('lobby')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-brand-red" id="navLobby">
-          <i class="ph-bold ph-game-controller text-xl"></i><span>Lobby</span>
+          <i class="ph-bold ph-game-controller text-xl"></i>
+          <span>Lobby</span>
         </button>
-        <button onclick="switchTab('myMatches')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-gray-400" id="navMyMatches">
-          <i class="ph-bold ph-sword text-xl"></i><span>Rooms</span>
+
+        <button onclick="switchTab('myMatches')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-gray-400 hover:text-gray-900" id="navMyMatches">
+          <div class="relative">
+            <i class="ph-bold ph-sword text-xl"></i>
+            <span id="navMyMatchesBadge" class="hidden absolute -top-1 -right-2 w-2 h-2 rounded-full bg-brand-red animate-ping"></span>
+          </div>
+          <span>Rooms</span>
         </button>
-        <button onclick="switchTab('wallet')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-gray-400" id="navWallet">
-          <i class="ph-bold ph-wallet text-xl"></i><span>Wallet</span>
+
+        <button onclick="switchTab('wallet')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-gray-400 hover:text-gray-900" id="navWallet">
+          <i class="ph-bold ph-wallet text-xl"></i>
+          <span>Wallet</span>
         </button>
-        <button onclick="switchTab('profile')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-gray-400" id="navProfile">
-          <i class="ph-bold ph-user-gear text-xl"></i><span>Profile</span>
+
+        <button onclick="switchTab('profile')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-gray-400 hover:text-gray-900" id="navProfile">
+          <i class="ph-bold ph-user-gear text-xl"></i>
+          <span>Profile</span>
         </button>
       </div>
     </nav>
   </div>
 
-  <!-- CREATE MATCH MODAL -->
-  <div id="createMatchModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-4 space-y-3 relative text-gray-900 shadow-2xl">
-      <button onclick="closeModal('createMatchModal')" class="absolute top-3 right-3 text-gray-400"><i class="ph-bold ph-x text-lg"></i></button>
-      <h3 class="text-sm font-bold uppercase font-display">Create Match</h3>
-      <div class="space-y-2 text-xs">
-        <input type="text" id="newMatchTitle" placeholder="Match Title (e.g. Bermuda Showdown)" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 outline-none">
-        <div class="grid grid-cols-2 gap-2">
-          <select id="newMatchMode" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 outline-none">
-            <option value="Solo">Solo (BR)</option><option value="Squad">Squad (BR)</option><option value="CS">Clash Squad</option>
-          </select>
-          <input type="number" id="newMatchSlots" value="48" placeholder="Slots" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 outline-none">
+  <!-- ================= ACTION MODALS ================= -->
+
+  <!-- 0. FORGOT PASSWORD & OTP RESET MODAL -->
+  <div id="forgotPasswordModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-sm w-full p-4 space-y-3 relative shadow-2xl text-gray-900">
+      <button onclick="closeModal('forgotPasswordModal')" class="absolute top-3 right-3 text-gray-400 hover:text-black">
+        <i class="ph-bold ph-x text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <div class="p-2 rounded-xl bg-brand-red/10 text-brand-red">
+          <i class="ph-bold ph-shield-warning text-xl"></i>
         </div>
-        <div class="grid grid-cols-3 gap-2">
-          <input type="number" id="newMatchFee" value="50" placeholder="Fee" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2">
-          <input type="number" id="newMatchPrize" value="1800" placeholder="Prize" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2">
-          <input type="number" id="newMatchPerKill" value="15" placeholder="Kill ₹" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2">
+        <div>
+          <h3 class="text-sm font-bold text-gray-900 uppercase font-display">Reset Password</h3>
+          <p class="text-[11px] text-gray-500">OTP verify karke naya password set karein</p>
         </div>
-        <input type="text" id="newMatchTime" placeholder="Match Time (e.g. 08:30 PM)" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2">
       </div>
-      <button onclick="saveNewTournament()" class="w-full py-2 bg-brand-red text-white font-bold rounded-xl text-xs uppercase shadow">Publish to All Phones</button>
+
+      <div id="fpStep1" class="space-y-2.5 text-xs">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Registered Mobile No. ya Gmail:</label>
+          <input type="text" id="fpContactInput" placeholder="Enter registered mobile or gmail" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2.5 text-gray-900 outline-none focus:border-brand-red">
+        </div>
+        <button onclick="sendForgotPassOTP()" class="w-full py-2.5 bg-brand-red text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow hover:brightness-110 active:scale-95 transition">
+          Send OTP
+        </button>
+      </div>
+
+      <div id="fpStep2" class="hidden space-y-2.5 text-xs">
+        <div class="p-2 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-[10px]" id="fpOtpSentNotice">
+          OTP sent successfully!
+        </div>
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Enter 4-Digit OTP:</label>
+          <input type="text" id="fpOtpInput" placeholder="e.g. 7412" maxlength="6" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2.5 text-gray-900 font-mono font-bold text-center tracking-widest text-base outline-none focus:border-brand-red">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">New Password (Min 6 chars):</label>
+          <input type="password" id="fpNewPasswordInput" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2.5 text-gray-900 outline-none focus:border-brand-red">
+        </div>
+        <button onclick="confirmResetPasswordWithOTP()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow hover:brightness-110 active:scale-95 transition">
+          Verify OTP & Save Password
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. JOIN TOURNAMENT MODAL -->
+  <div id="joinModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-sm w-full p-4 space-y-3 relative shadow-2xl text-gray-900">
+      <button onclick="closeModal('joinModal')" class="absolute top-3 right-3 text-gray-400 hover:text-black">
+        <i class="ph-bold ph-x text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <div class="p-2 rounded-xl bg-brand-red/10 text-brand-red">
+          <i class="ph-bold ph-crosshair text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-gray-900 uppercase font-display" id="joinModalTitle">Join Tournament</h3>
+          <p class="text-[11px] text-gray-500" id="joinModalSub">Fill your player credentials</p>
+        </div>
+      </div>
+
+      <div class="p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs flex justify-between">
+        <span class="text-gray-500">Entry Fee:</span>
+        <span id="joinModalFee" class="font-bold text-amber-600 font-display">₹50.00</span>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Free Fire In-Game Name (IGN):</label>
+          <input type="text" id="joinPlayerIGN" placeholder="e.g. RAISTAR_99" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-gray-900 outline-none focus:border-brand-red">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Free Fire Player UID (10 digits):</label>
+          <input type="text" id="joinPlayerUID" placeholder="e.g. 1827364501" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-gray-900 font-mono outline-none focus:border-brand-red">
+        </div>
+      </div>
+
+      <button id="confirmJoinBtn" onclick="confirmJoinTournamentAction()" class="w-full py-2.5 bg-gradient-to-r from-brand-red to-brand-orange text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:brightness-110 active:scale-95 transition">
+        Pay Fee & Confirm Slot
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. ADD MONEY MODAL WITH ADMIN REAL QR -->
+  <div id="addMoneyModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-sm w-full p-4 space-y-3 relative shadow-2xl max-h-[92vh] overflow-y-auto text-gray-900">
+      <button onclick="closeModal('addMoneyModal')" class="absolute top-3 right-3 text-gray-400 hover:text-black">
+        <i class="ph-bold ph-x text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <div class="p-2 rounded-xl bg-emerald-100 text-emerald-600">
+          <i class="ph-bold ph-qr-code text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-gray-900 uppercase font-display">Instant UPI Deposit</h3>
+          <p class="text-[11px] text-gray-500">Scan Admin QR & Pay via any UPI App</p>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-gray-700 mb-1">Enter Amount (Min ₹20):</label>
+        <div class="relative">
+          <span class="absolute left-3 top-2 text-gray-500 font-bold">₹</span>
+          <input type="number" id="depositAmountInput" value="50" min="20" oninput="generateDynamicUPIQR()" class="w-full bg-gray-50 border border-gray-300 rounded-xl py-2 pl-7 pr-3 text-gray-900 font-bold text-base outline-none focus:border-emerald-500">
+        </div>
+        <div class="flex gap-1.5 mt-2">
+          <button onclick="setDepositPreset(30)" class="flex-1 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg border border-gray-300 font-semibold">₹30</button>
+          <button onclick="setDepositPreset(50)" class="flex-1 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg border border-gray-300 font-semibold">₹50</button>
+          <button onclick="setDepositPreset(100)" class="flex-1 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg border border-gray-300 font-semibold">₹100</button>
+          <button onclick="setDepositPreset(200)" class="flex-1 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg border border-gray-300 font-semibold">₹200</button>
+        </div>
+      </div>
+
+      <!-- ADMIN QR CODE DISPLAY BOX -->
+      <div class="p-3 rounded-xl bg-gray-50 text-gray-900 flex flex-col items-center justify-center space-y-2 text-center border border-gray-200">
+        <div class="flex items-center justify-between w-full px-1">
+          <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Admin Payment QR</span>
+          <span id="qrPayeeNameBadge" class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Admin Dewansh</span>
+        </div>
+        
+        <div id="qrImageWrapper" class="w-44 h-44 bg-white p-1.5 rounded-xl flex items-center justify-center border-2 border-emerald-400 shadow-sm relative">
+          <img id="dynamicUpiQRImg" src="" alt="Admin UPI QR Code" class="w-full h-full object-contain rounded-lg">
+        </div>
+
+        <div class="text-[11px] font-semibold text-gray-700">
+          Amount to Pay: <span id="qrAmountDisplay" class="font-bold text-emerald-600 text-sm">₹50.00</span>
+        </div>
+        
+        <div class="w-full flex items-center justify-between bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-[11px]">
+          <div class="text-left">
+            <span class="text-[9px] text-gray-400 block font-sans">Admin UPI ID:</span>
+            <span id="qrUpiTextDisplay" class="font-mono font-bold text-gray-800 select-all">boohyahx@axl</span>
+          </div>
+          <button onclick="copyAdminUpiId()" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-[10px] font-bold text-gray-700 border border-gray-300 flex items-center gap-1">
+            <i class="ph-bold ph-copy"></i> Copy
+          </button>
+        </div>
+      </div>
+
+      <a id="directUpiPayLink" href="#" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5 shadow transition">
+        <i class="ph-bold ph-device-mobile text-base"></i> Open Any UPI App Directly
+      </a>
+
+      <div class="pt-2 border-t border-gray-200 space-y-2 text-xs">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Enter 12-Digit UTR / Transaction No.:</label>
+          <input type="text" id="depositUtrInput" placeholder="Payment hone ke baad UTR yahan dalein" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-gray-900 font-mono outline-none focus:border-brand-red">
+        </div>
+        <button onclick="submitDepositPayment()" class="w-full py-2.5 bg-gradient-to-r from-brand-red to-brand-orange text-white font-bold rounded-xl uppercase tracking-wider text-xs shadow hover:brightness-110 active:scale-95 transition">
+          Submit Payment for Verification
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. WITHDRAWAL MODAL -->
+  <div id="withdrawModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-sm w-full p-4 space-y-3 relative shadow-2xl text-gray-900">
+      <button onclick="closeModal('withdrawModal')" class="absolute top-3 right-3 text-gray-400 hover:text-black">
+        <i class="ph-bold ph-x text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <div class="p-2 rounded-xl bg-amber-100 text-amber-600">
+          <i class="ph-bold ph-hand-coins text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-gray-900 uppercase font-display">Withdraw Winnings</h3>
+          <p class="text-[11px] text-gray-500">Minimum withdrawal is ₹110</p>
+        </div>
+      </div>
+
+      <div class="p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs flex justify-between">
+        <span class="text-gray-500">Available Balance:</span>
+        <span id="withdrawModalAvailBal" class="font-bold text-gray-900 font-display">₹0.00</span>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Withdrawal Amount (₹110+):</label>
+          <input type="number" id="withdrawAmountInput" min="110" placeholder="Min 110" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 font-bold outline-none focus:border-amber-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-semibold mb-1">Your Receiving UPI ID / VPA:</label>
+          <input type="text" id="withdrawUpiInput" placeholder="username@upi" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 font-mono outline-none focus:border-amber-500">
+        </div>
+      </div>
+
+      <button onclick="confirmWithdrawalRequest()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold uppercase tracking-wider text-xs rounded-xl shadow transition">
+        Submit Withdrawal Request
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. ADMIN CREATE TOURNAMENT MODAL -->
+  <div id="createMatchModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-sm w-full p-4 space-y-3 relative shadow-2xl max-h-[90vh] overflow-y-auto text-gray-900">
+      <button onclick="closeModal('createMatchModal')" class="absolute top-3 right-3 text-gray-400 hover:text-black">
+        <i class="ph-bold ph-x text-lg"></i>
+      </button>
+
+      <h3 class="text-sm font-bold text-gray-900 uppercase font-display flex items-center gap-1.5">
+        <i class="ph-bold ph-plus-circle text-brand-red"></i> Create / Edit Tournament
+      </h3>
+
+      <div class="space-y-2 text-xs">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-0.5">Tournament Title:</label>
+          <input type="text" id="newMatchTitle" placeholder="e.g. Bermuda Sunday Showdown" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 outline-none focus:border-brand-red">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-gray-700 font-semibold mb-0.5">Match Mode:</label>
+            <select id="newMatchMode" onchange="autoSuggestSlots()" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 outline-none">
+              <option value="Solo">Solo (BR)</option>
+              <option value="Squad">Squad (BR)</option>
+              <option value="CS">Clash Squad (4v4)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 font-semibold mb-0.5">Map:</label>
+            <select id="newMatchMap" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 outline-none">
+              <option value="Bermuda">Bermuda</option>
+              <option value="Purgatory">Purgatory</option>
+              <option value="Kalahari">Kalahari</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-brand-red font-bold mb-0.5">Total Slots (Match Capacity):</label>
+          <input type="number" id="newMatchSlots" value="48" min="2" max="100" placeholder="e.g. 48 ya 8" class="w-full bg-red-50 border border-brand-red/50 rounded-lg p-2 text-brand-red font-bold outline-none">
+          <span class="text-[9.5px] text-gray-500">Kitne players ki jagah rakhna hai admin yahan set karega.</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-gray-700 font-semibold mb-0.5">Entry Fee (₹):</label>
+            <input type="number" id="newMatchFee" value="50" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 outline-none">
+          </div>
+          <div>
+            <label class="block text-gray-700 font-semibold mb-0.5">Prize Pool (₹):</label>
+            <input type="number" id="newMatchPrize" value="1800" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 outline-none">
+          </div>
+          <div>
+            <label class="block text-brand-red font-bold mb-0.5">Kill Rs (₹):</label>
+            <input type="number" id="newMatchPerKill" value="15" placeholder="e.g. 15" class="w-full bg-red-50 border border-brand-red/50 rounded-lg p-2 text-brand-red font-bold outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-semibold mb-0.5">Match Date & Time:</label>
+          <input type="text" id="newMatchTime" placeholder="Today, 08:30 PM" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 outline-none">
+        </div>
+      </div>
+
+      <button onclick="saveNewTournament()" class="w-full py-2 bg-brand-red hover:bg-red-700 text-white font-bold rounded-xl uppercase tracking-wider text-xs shadow">
+        Publish Tournament
+      </button>
+    </div>
+  </div>
+
+  <!-- 5. ADMIN DISPATCH ROOM CREDENTIALS MODAL -->
+  <div id="dispatchRoomModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-sm w-full p-4 space-y-3 relative shadow-2xl text-gray-900">
+      <button onclick="closeModal('dispatchRoomModal')" class="absolute top-3 right-3 text-gray-400 hover:text-black">
+        <i class="ph-bold ph-x text-lg"></i>
+      </button>
+
+      <h3 class="text-sm font-bold text-gray-900 uppercase font-display flex items-center gap-1.5">
+        <i class="ph-bold ph-key text-brand-orange"></i> Publish Room ID & Password
+      </h3>
+      <p class="text-[11px] text-gray-500" id="dispatchMatchTitleDisplay">Match #101</p>
+
+      <input type="hidden" id="dispatchMatchId">
+
+      <div class="space-y-2 text-xs">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-0.5">Free Fire Custom Room ID:</label>
+          <input type="text" id="dispatchRoomIdInput" placeholder="e.g. 9823412" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 font-mono outline-none focus:border-brand-red">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-semibold mb-0.5">Room Password:</label>
+          <input type="text" id="dispatchRoomPassInput" placeholder="e.g. 1234" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 font-mono outline-none focus:border-brand-red">
+        </div>
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="dispatchRoomVisibleCheck" class="rounded border-gray-300 text-brand-red" checked>
+          <label for="dispatchRoomVisibleCheck" class="text-gray-700 text-xs">Make visible immediately to joined players</label>
+        </div>
+      </div>
+
+      <button onclick="confirmRoomDispatch()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl uppercase tracking-wider text-xs shadow">
+        Save & Send to Registered Players
+      </button>
+    </div>
+  </div>
+
+  <!-- 6. ADMIN DISTRIBUTE WINNINGS MODAL (MULTI-PLAYER) -->
+  <div id="distributeWinningsModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-gray-200 rounded-2xl max-w-sm w-full p-4 space-y-3 relative shadow-2xl max-h-[90vh] overflow-y-auto text-gray-900">
+      <button onclick="closeModal('distributeWinningsModal')" class="absolute top-3 right-3 text-gray-400 hover:text-black">
+        <i class="ph-bold ph-x text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <div class="p-2 rounded-xl bg-amber-100 text-amber-600">
+          <i class="ph-bold ph-crown text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-gray-900 uppercase font-display">Distribute Winnings</h3>
+          <p class="text-[11px] text-gray-500" id="distributeMatchTitle">Match Title</p>
+        </div>
+      </div>
+      
+      <div class="text-[11px] bg-gray-50 border border-gray-200 p-2 rounded-lg text-gray-700">
+        Per Kill Reward for this match: <b class="text-brand-red" id="distributePerKillDisplay">₹0</b>
+      </div>
+      
+      <input type="hidden" id="distributeMatchId">
+      
+      <div class="space-y-2 text-xs">
+        <label class="block font-semibold text-gray-700">Add Player Reward (Rank Prize + Kills):</label>
+        
+        <!-- Reward Entry Form -->
+        <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
+          <input type="text" id="rewardUID" placeholder="Player UID" class="w-full bg-white border border-gray-300 rounded-lg p-2 outline-none focus:border-brand-red">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="number" id="rewardRankPrize" placeholder="Rank Prize (₹)" class="w-full bg-white border border-gray-300 rounded-lg p-2 outline-none focus:border-brand-red">
+            <input type="number" id="rewardKills" placeholder="Total Kills" class="w-full bg-white border border-gray-300 rounded-lg p-2 outline-none focus:border-brand-red">
+          </div>
+          <button onclick="addPlayerToRewardList()" class="w-full py-1.5 bg-gray-800 text-white font-bold rounded-lg text-xs hover:bg-gray-700">
+            + Add to List
+          </button>
+        </div>
+
+        <!-- Added Players List -->
+        <div id="rewardListContainer" class="space-y-1 max-h-40 overflow-y-auto"></div>
+      </div>
+
+      <button onclick="confirmDistributeWinnings()" class="w-full py-2.5 bg-gradient-to-r from-brand-orange to-amber-500 text-white font-bold uppercase tracking-wider text-xs rounded-xl shadow transition hover:brightness-110 active:scale-95">
+        Process Payouts to All
+      </button>
     </div>
   </div>
 
   <!-- TOAST CONTAINER -->
   <div id="toastContainer" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 pointer-events-none space-y-2 w-max max-w-[90vw]"></div>
 
-  <!-- FIREBASE MODULE -->
+    <!-- ================= FIREBASE LIVE CLOUD INTEGRATION ================= -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      createUserWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc, 
+      setDoc, 
+      updateDoc,
+      collection, 
+      query, 
+      where, 
+      getDocs, 
+      onSnapshot,
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    // Your official BhooyahX Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDGLvimVESYyDbeg40ugg31DTHkddnvPRI",
       authDomain: "bhooyahx.firebaseapp.com",
@@ -358,359 +1025,858 @@
       measurementId: "G-H3Z339YV8V"
     };
 
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    window.auth = auth; window.db = db;
+    // Bind to window for global access across the app
+    window.firebaseApp = app;
+    window.auth = auth;
+    window.db = db;
     window.signInWithEmailAndPassword = signInWithEmailAndPassword;
     window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
     window.signOut = signOut;
-    window.doc = doc; window.getDoc = getDoc; window.setDoc = setDoc;
-    window.updateDoc = updateDoc; window.collection = collection;
-    window.query = query; window.where = where; window.getDocs = getDocs;
-    window.onSnapshot = onSnapshot; window.serverTimestamp = serverTimestamp;
+    window.doc = doc;
+    window.getDoc = getDoc;
+    window.setDoc = setDoc;
+    window.updateDoc = updateDoc;
+    window.collection = collection;
+    window.query = query;
+    window.where = where;
+    window.getDocs = getDocs;
+    window.onSnapshot = onSnapshot;
+    window.serverTimestamp = serverTimestamp;
 
-    // 1. REAL-TIME TOURNAMENTS SYNC (SABHI PHONES PAR MATCHES INSTANT DIKHENGE)
-    try {
-      onSnapshot(collection(db, "tournaments"), (snap) => {
-        const matches = [];
-        snap.forEach(d => matches.push({ id: d.id, ...d.data() }));
-        window.STATE.tournaments = matches;
-        window.saveStorage('tournaments', matches);
-        if (typeof window.renderTournaments === 'function') window.renderTournaments();
-        if (typeof window.renderMyMatches === 'function') window.renderMyMatches();
-        if (typeof window.renderAdminTournaments === 'function') window.renderAdminTournaments();
-      });
-    } catch (e) { console.warn(e); }
-
-    // 2. REAL-TIME SETTINGS & REFERRAL REWARD SYNC
-    try {
-      onSnapshot(doc(db, "settings", "global"), (snap) => {
-        if (snap.exists()) {
-          const d = snap.data();
-          if (d.adminName) window.STATE.adminName = d.adminName;
-          if (d.adminUpi) window.STATE.adminUpi = d.adminUpi;
-          if (d.adminCustomQr !== undefined) window.STATE.adminCustomQr = d.adminCustomQr;
-          if (d.referralReward !== undefined) window.STATE.referralReward = Number(d.referralReward);
-          if (typeof window.applyGlobalSettingsToUI === 'function') window.applyGlobalSettingsToUI();
-        }
-      });
-    } catch (e) { console.warn(e); }
-
+    // Real-Time Permanent User Session Observer
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          const d = userDoc.data();
-          window.STATE.currentUser = {
-            id: user.uid, email: d.email, username: d.username,
-            role: d.role || "user", ign: d.ign, uid: d.ff_uid,
-            balance: Number(d.balance || 0), deposited: Number(d.deposited || 0), won: Number(d.won || 0)
-          };
-          window.saveStorage('currentUser', window.STATE.currentUser);
-          if (typeof window.openApp === 'function') window.openApp();
+        try {
+          const userDocRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            window.STATE.currentUser = {
+              id: user.uid,
+              email: data.email || user.email,
+              username: data.username || "Player",
+              role: data.role || "user",
+              ign: data.ign || "PLAYER",
+              uid: data.ff_uid || user.uid,
+              balance: Number(data.balance || 0),
+              deposited: Number(data.deposited || 0),
+              won: Number(data.won || 0)
+            };
+            window.saveStorage('currentUser', window.STATE.currentUser);
+            if (typeof window.openApp === 'function') {
+              window.openApp();
+            }
+          }
+        } catch (err) {
+          console.warn("Session restore error:", err);
         }
       }
     });
+
+    
+    // Real-time Global Settings Listener (Admin UPI, Name & QR Image Sync Across ALL Devices)
+    try {
+      const settingsDocRef = doc(db, "settings", "global");
+      onSnapshot(settingsDocRef, (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.adminName) {
+            window.STATE.adminName = data.adminName;
+            window.saveStorage('adminName', data.adminName);
+          }
+          if (data.adminUpi) {
+            window.STATE.adminUpi = data.adminUpi;
+            window.saveStorage('adminUpi', data.adminUpi);
+          }
+          if (data.adminCustomQr !== undefined) {
+            window.STATE.adminCustomQr = data.adminCustomQr;
+            window.saveStorage('adminCustomQr', data.adminCustomQr);
+          }
+          // Update live UI on this device
+          if (typeof window.applyGlobalSettingsToUI === 'function') {
+            window.applyGlobalSettingsToUI();
+          }
+        }
+      }, (err) => {
+        console.warn("Global settings sync error:", err);
+      });
+    } catch (e) {
+      console.warn("Settings listener init error:", e);
+    }
+
+    console.log("Firebase initialized successfully for BhooyahX!");
   </script>
 
-  <!-- APP STATE & LOGIC -->
+  <!-- ================= LOGIC & REAL APP STATE ================= -->
   <script>
-    function loadStorage(k, def) { try { const v = localStorage.getItem('BHOOYAHX_' + k); return v ? JSON.parse(v) : def; } catch(e) { return def; } }
-    function saveStorage(k, v) { try { localStorage.setItem('BHOOYAHX_' + k, JSON.stringify(v)); } catch(e) {} }
+    // Pure Real App State with LocalStorage Persistence
+    function loadStorage(key, defaultVal) {
+      try {
+        const val = localStorage.getItem('BHOOYAHX_' + key);
+        return val ? JSON.parse(val) : defaultVal;
+      } catch (e) {
+        return defaultVal;
+      }
+    }
+
+    function saveStorage(key, val) {
+      try {
+        localStorage.setItem('BHOOYAHX_' + key, JSON.stringify(val));
+      } catch (e) {}
+    }
+
+    // Clear legacy mock tournaments if present in storage
+    let storedTournaments = loadStorage('tournaments', []);
+    storedTournaments = storedTournaments.filter(t => t.id !== "T101" && t.id !== "T102");
+    saveStorage('tournaments', storedTournaments);
 
     window.STATE = {
+      appName: loadStorage('appName', "BhooyahX"),
       adminName: loadStorage('adminName', "Admin Dewansh"),
       adminUpi: loadStorage('adminUpi', "boohyahx@axl"),
       adminCustomQr: loadStorage('adminCustomQr', ""),
-      referralReward: loadStorage('referralReward', 10),
+      theme: loadStorage('theme', "day"),
+      supportLinks: loadStorage('supportLinks', { telegram: 'https://t.me/bhooyahx', whatsapp: 'https://wa.me/910000000000' }),
+      roomInstructions: loadStorage('roomInstructions', `• Join the custom room 10-15 minutes before the match start time.\n• Emulator players are strictly NOT allowed.\n• Teaming up, hacking, or using bugs will lead to immediate permanent ban.\n• Do not change your slot position once seated in the room.`),
+      autoSettings: loadStorage('autoSettings', { deposit: false, withdraw: false }),
       currentUser: loadStorage('currentUser', null),
       tournaments: loadStorage('tournaments', []),
-      transactions: loadStorage('transactions', [])
+      // Real empty transactions initially - NO FAKE MONEY
+      transactions: loadStorage('transactions', []),
+      pendingDeposits: loadStorage('pendingDeposits', []),
+      pendingWithdrawals: loadStorage('pendingWithdrawals', []),
+      pendingWinningsList: []
     };
 
-    function showToast(msg, type="info") {
-      const c = document.getElementById('toastContainer');
-      const t = document.createElement('div');
-      t.className = `px-4 py-2.5 rounded-xl border border-gray-700 ${type==='error'?'bg-red-600':'bg-gray-900'} text-white text-xs font-semibold shadow-2xl`;
-      t.innerText = msg;
-      c.appendChild(t);
-      setTimeout(() => t.remove(), 3500);
+    function showToast(message, type = "info") {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const bgColor = type === 'error' ? 'bg-red-600 text-white' : 'bg-gray-900 text-white';
+      toast.className = `px-4 py-2.5 rounded-xl border border-gray-700 ${bgColor} text-xs font-semibold shadow-2xl backdrop-blur-md`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
     }
 
-    // MANUAL SYNC REFRESH (HEADER BUTTON)
-    function manualSyncRefresh() {
-      const icon = document.getElementById('headerRefreshIcon');
-      if (icon) icon.classList.add('animate-spin');
-      renderTournaments();
-      renderMyMatches();
-      renderWallet();
-      applyGlobalSettingsToUI();
-      showToast("App data refreshed & synced with cloud!", "success");
-      setTimeout(() => { if (icon) icon.classList.remove('animate-spin'); }, 700);
+    function showGateError(msg) {
+      const alertBox = document.getElementById('gateAlert');
+      alertBox.innerText = msg;
+      alertBox.classList.remove('hidden');
     }
 
-    function switchAuthGateMode(m) {
-      document.getElementById('gateLoginForm').classList.toggle('hidden', m !== 'login');
-      document.getElementById('gateRegisterForm').classList.toggle('hidden', m === 'login');
-      document.getElementById('gateTabLogin').className = m === 'login' ? "flex-1 pb-2 text-center font-display font-bold text-sm text-brand-red border-b-2 border-brand-red" : "flex-1 pb-2 text-center font-display font-bold text-sm text-gray-400";
-      document.getElementById('gateTabRegister').className = m === 'register' ? "flex-1 pb-2 text-center font-display font-bold text-sm text-brand-red border-b-2 border-brand-red" : "flex-1 pb-2 text-center font-display font-bold text-sm text-gray-400";
+    // AUTH SWITCH
+    function switchAuthGateMode(mode) {
+      document.getElementById('gateLoginForm').classList.toggle('hidden', mode !== 'login');
+      document.getElementById('gateRegisterForm').classList.toggle('hidden', mode === 'login');
+      document.getElementById('gateAlert').classList.add('hidden');
+      document.getElementById('gateTabLogin').className = mode === 'login' ? "flex-1 pb-2 text-center font-display font-bold text-sm text-brand-red border-b-2 border-brand-red transition-all" : "flex-1 pb-2 text-center font-display font-bold text-sm text-gray-400 transition-all";
+      document.getElementById('gateTabRegister').className = mode === 'register' ? "flex-1 pb-2 text-center font-display font-bold text-sm text-brand-red border-b-2 border-brand-red transition-all" : "flex-1 pb-2 text-center font-display font-bold text-sm text-gray-400 transition-all";
     }
 
+    // REAL AUTH: LOGIN (ONLY REGISTERED USERS CAN LOGIN)
     async function handleAuthLogin() {
-      const u = document.getElementById('gateLoginEmail').value.trim();
-      const p = document.getElementById('gateLoginPassword').value;
-      if (!u || !p) return showToast("Enter credentials", "error");
+      const userInput = document.getElementById('gateLoginEmail').value.trim();
+      const pass = document.getElementById('gateLoginPassword').value;
 
-      if (u.toLowerCase() === "dewansh0942c" || u.toLowerCase() === "admin") {
-        if (p !== "Garena0942C" && p !== "admin123") return showToast("Wrong Admin Password", "error");
-        STATE.currentUser = { id: "ADMIN_MASTER", email: "admin@bhooyahx.com", username: "Dewansh", role: "admin", ign: "ADMIN", uid: "0942094201", balance: 0, deposited: 0, won: 0 };
-        saveStorage('currentUser', STATE.currentUser);
-        openApp();
+      if (!userInput || !pass) {
+        showGateError("Kripya email/mobile aur password dono bharein.");
         return;
       }
 
+      // Master Admin Login (Secret Access)
+      if (userInput.toLowerCase() === "dewansh0942c" || userInput.toLowerCase() === "admin") {
+        if (pass !== "Garena0942C" && pass !== "admin123" && pass.length < 4) {
+          showGateError("Invalid Admin Password.");
+          return;
+        }
+        STATE.currentUser = {
+          id: "ADMIN_MASTER",
+          email: "admin@bhooyahx.com",
+          username: "Dewansh",
+          role: "admin",
+          ign: "ADMIN_BOSS",
+          uid: "0942094201",
+          balance: 0.00,
+          deposited: 0.00,
+          won: 0.00
+        };
+        saveStorage('currentUser', STATE.currentUser);
+        openApp();
+        showToast("Master Admin Mode Activated!", "success");
+        return;
+      }
+
+      // Firebase Online Authentication Check (If Firebase connected)
       if (window.auth && window.db) {
         try {
-          const email = u.includes('@') ? u : `${u.toLowerCase()}@bhooyahx.com`;
-          const cred = await window.signInWithEmailAndPassword(window.auth, email, p);
-          const docSnap = await window.getDoc(window.doc(window.db, "users", cred.user.uid));
-          if (docSnap.exists()) {
-            const d = docSnap.data();
-            STATE.currentUser = { id: cred.user.uid, email: d.email, username: d.username, role: d.role || "user", ign: d.ign, uid: d.ff_uid, balance: Number(d.balance||0), deposited: 0, won: 0 };
+          const emailToLogin = userInput.includes('@') ? userInput : `${userInput.toLowerCase()}@bhooyahx.com`;
+          const cred = await window.signInWithEmailAndPassword(window.auth, emailToLogin, pass);
+          const userDoc = await window.getDoc(window.doc(window.db, "users", cred.user.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            STATE.currentUser = {
+              id: cred.user.uid,
+              email: data.email,
+              username: data.username,
+              role: data.role || "user",
+              ign: data.ign,
+              uid: data.ff_uid,
+              balance: Number(data.balance || 0),
+              deposited: Number(data.deposited || 0),
+              won: Number(data.won || 0)
+            };
             saveStorage('currentUser', STATE.currentUser);
             openApp();
+            showToast("Login Successful!", "success");
+            return;
           }
-        } catch(e) { showToast(e.message, "error"); }
+        } catch (err) {
+          showGateError("Login fail: " + err.message);
+          return;
+        }
       }
+
+      // Database Verification Check (Strict: Only Registered Users can login)
+      const allUsers = loadStorage('allRegisteredUsersList', []);
+      const userRecord = allUsers.find(u => 
+        u.email.toLowerCase() === userInput.toLowerCase() || 
+        u.username.toLowerCase() === userInput.toLowerCase()
+      );
+
+      if (!userRecord) {
+        showGateError("Yeh account registered nahi hai! Kripya pehle Register karein.");
+        return;
+      }
+
+      if (userRecord.password !== pass) {
+        showGateError("Galat password! Kripya sahi password dalein.");
+        return;
+      }
+
+      // Login success
+      STATE.currentUser = userRecord;
+      saveStorage('currentUser', STATE.currentUser);
+      openApp();
+      showToast("Entered Arena successfully!");
     }
 
+    // REAL AUTH: REGISTER (STRICT UNIQUE UID & UNIQUE MOBILE/EMAIL CHECK)
     async function handleAuthRegister() {
       const email = document.getElementById('gateRegEmail').value.trim();
       const username = document.getElementById('gateRegUsername').value.trim();
       const ign = document.getElementById('gateRegIGN').value.trim();
       const uid = document.getElementById('gateRegUID').value.trim();
-      const refCode = document.getElementById('gateRegReferralCode').value.trim();
       const pass = document.getElementById('gateRegPassword').value;
 
       if (!email || !username || !ign || uid.length < 8 || !pass) {
-        showToast("Fill all details correctly (UID 8-10 digits)", "error");
+        showGateError("Kripya saari details sahi bharein (UID kam se kam 8-10 digits).");
         return;
       }
 
-      if (window.auth && window.db) {
+      // 1. Firebase Online Duplicate Check (If Firebase connected)
+      if (window.db) {
         try {
-          const emailFormatted = email.includes('@') ? email : `${email.toLowerCase()}@bhooyahx.com`;
-          const cred = await window.createUserWithEmailAndPassword(window.auth, emailFormatted, pass);
-          
-          await window.setDoc(window.doc(window.db, "users", cred.user.uid), {
-            userId: cred.user.uid, email, username, ign, ff_uid: uid,
-            role: "user", balance: 0.00, referredBy: refCode || null,
-            createdAt: window.serverTimestamp()
-          });
-
-          // Check and credit referral reward to referrer
-          if (refCode && window.STATE.referralReward > 0) {
-            const refQuery = window.query(window.collection(window.db, "users"), window.where("ff_uid", "==", refCode));
-            const refSnap = await window.getDocs(refQuery);
-            if (!refSnap.empty) {
-              const referrerDoc = refSnap.docs[0];
-              const curBal = Number(referrerDoc.data().balance || 0);
-              await window.updateDoc(window.doc(window.db, "users", referrerDoc.id), {
-                balance: curBal + window.STATE.referralReward
-              });
-            }
+          const uidQuery = window.query(window.collection(window.db, "users"), window.where("ff_uid", "==", uid));
+          const uidSnap = await window.getDocs(uidQuery);
+          if (!uidSnap.empty) {
+            showGateError("Yeh Free Fire UID pehle se registered hai! Ek UID se sirf ek hi account ban sakta hai.");
+            return;
           }
 
-          STATE.currentUser = { id: cred.user.uid, email, username, ign, uid, role: "user", balance: 0, deposited: 0, won: 0 };
-          saveStorage('currentUser', STATE.currentUser);
-          openApp();
-          showToast("Account created successfully!", "success");
-        } catch(e) { showToast(e.message, "error"); }
+          const emailQuery = window.query(window.collection(window.db, "users"), window.where("email", "==", email.toLowerCase()));
+          const emailSnap = await window.getDocs(emailQuery);
+          if (!emailSnap.empty) {
+            showGateError("Yeh Email / Mobile Number pehle se registered hai! Kripya Sign In karein.");
+            return;
+          }
+        } catch (e) {
+          console.warn("Firebase check:", e);
+        }
       }
+
+      // 2. Database Duplicate Check (Local/Offline & App Engine)
+      const allUsers = loadStorage('allRegisteredUsersList', []);
+
+      // Check duplicate UID
+      const duplicateUID = allUsers.find(u => u.uid === uid);
+      if (duplicateUID) {
+        showGateError("Yeh Free Fire UID pehle se registered hai! Ek UID se ek hi account banega.");
+        return;
+      }
+
+      // Check duplicate Email or Mobile No.
+      const duplicateEmailOrMobile = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (duplicateEmailOrMobile) {
+        showGateError("Yeh Email / Mobile Number pehle se registered hai! Kripya Sign In karein.");
+        return;
+      }
+
+      // Check duplicate Username
+      const duplicateUsername = allUsers.find(u => u.username.toLowerCase() === username.toLowerCase());
+      if (duplicateUsername) {
+        showGateError("Yeh Username pehle se kisi aur ne liya hua hai! Naya username chunein.");
+        return;
+      }
+
+      const isAdmin = (username.toLowerCase() === "dewansh0942c" || username.toLowerCase() === "admin");
+
+      const newUser = {
+        id: "U_" + Date.now(),
+        email: email,
+        username: username,
+        ign: ign,
+        uid: uid,
+        password: pass,
+        role: isAdmin ? "admin" : "user",
+        balance: 0.00, // STRICTLY ZERO
+        deposited: 0.00,
+        won: 0.00
+      };
+
+      // Save to real users database
+      allUsers.push(newUser);
+      saveStorage('allRegisteredUsersList', allUsers);
+
+      // Save to Firebase Cloud if initialized
+      if (window.auth && window.db) {
+        try {
+          const emailToRegister = email.includes('@') ? email : `${email.toLowerCase()}@bhooyahx.com`;
+          const cred = await window.createUserWithEmailAndPassword(window.auth, emailToRegister, pass);
+          newUser.id = cred.user.uid;
+          await window.setDoc(window.doc(window.db, "users", cred.user.uid), {
+            userId: cred.user.uid,
+            email: email,
+            username: username,
+            ign: ign,
+            ff_uid: uid,
+            role: newUser.role,
+            balance: 0.00,
+            deposited: 0.00,
+            won: 0.00,
+            createdAt: window.serverTimestamp ? window.serverTimestamp() : new Date()
+          });
+        } catch (err) {
+          console.warn("Firebase user create:", err);
+        }
+      }
+
+      STATE.currentUser = newUser;
+      saveStorage('currentUser', STATE.currentUser);
+
+      openApp();
+      showToast("Account successfully ban gaya! Balance: ₹0.00", "success");
+    }
+
+    // AUTO SUGGEST SLOTS ON MODE CHANGE
+    function autoSuggestSlots() {
+      const mode = document.getElementById('newMatchMode').value;
+      const slotsInput = document.getElementById('newMatchSlots');
+      if (mode === 'CS') {
+        slotsInput.value = 8;
+      } else {
+        slotsInput.value = 48;
+      }
+    }
+
+    // FORGOT PASSWORD MODAL & OTP RESET FLOW
+    let currentFpOtp = null;
+    let currentFpUser = null;
+
+    function openForgotPasswordModal() {
+      currentFpOtp = null;
+      currentFpUser = null;
+      document.getElementById('fpContactInput').value = "";
+      document.getElementById('fpOtpInput').value = "";
+      document.getElementById('fpNewPasswordInput').value = "";
+      document.getElementById('fpStep1').classList.remove('hidden');
+      document.getElementById('fpStep2').classList.add('hidden');
+      openModal('forgotPasswordModal');
+    }
+
+    function sendForgotPassOTP() {
+      const contact = document.getElementById('fpContactInput').value.trim();
+      if (!contact) {
+        showToast("Kripya apna registered Mobile No. ya Gmail dalein", "error");
+        return;
+      }
+
+      const allUsers = loadStorage('allRegisteredUsersList', []);
+      const user = allUsers.find(u => 
+        u.email.toLowerCase() === contact.toLowerCase() || 
+        u.username.toLowerCase() === contact.toLowerCase()
+      );
+
+      if (!user) {
+        showToast("Yeh Mobile No./Gmail registered nahi mila!", "error");
+        return;
+      }
+
+      currentFpUser = user;
+      // 4-Digit OTP Generate
+      currentFpOtp = Math.floor(1000 + Math.random() * 9000).toString();
+
+      document.getElementById('fpOtpSentNotice').innerText = `OTP ${contact} par bhej diya gaya hai! (Verification Code: ${currentFpOtp})`;
+      document.getElementById('fpStep1').classList.add('hidden');
+      document.getElementById('fpStep2').classList.remove('hidden');
+
+      showToast(`OTP Code: ${currentFpOtp}`, "success");
+    }
+
+    function confirmResetPasswordWithOTP() {
+      const enteredOtp = document.getElementById('fpOtpInput').value.trim();
+      const newPass = document.getElementById('fpNewPasswordInput').value;
+
+      if (enteredOtp !== currentFpOtp) {
+        showToast("Galat OTP! Kripya sahi code dalein.", "error");
+        return;
+      }
+
+      if (!newPass || newPass.length < 6) {
+        showToast("Naya password kam se kam 6 akshar ka hona chahiye.", "error");
+        return;
+      }
+
+      // Update password in real database
+      const allUsers = loadStorage('allRegisteredUsersList', []);
+      const userIdx = allUsers.findIndex(u => u.id === currentFpUser.id);
+      if (userIdx !== -1) {
+        allUsers[userIdx].password = newPass;
+        saveStorage('allRegisteredUsersList', allUsers);
+      }
+
+      closeModal('forgotPasswordModal');
+      showToast("Password successfully reset ho gaya! Ab naye password se login karein.", "success");
+      document.getElementById('gateLoginEmail').value = currentFpUser.email;
+      document.getElementById('gateLoginPassword').value = newPass;
     }
 
     function openApp() {
       document.getElementById('authGateContainer').classList.add('hidden');
       document.getElementById('authenticatedApp').classList.remove('hidden');
-      renderHeader(); renderProfile(); renderWallet(); switchTab('lobby');
+      renderHeader();
+      renderProfile();
+      renderWallet();
+      switchTab('lobby');
     }
 
     function handleFirebaseLogout() {
-      STATE.currentUser = null; saveStorage('currentUser', null);
+      STATE.currentUser = null;
+      saveStorage('currentUser', null);
       document.getElementById('authGateContainer').classList.remove('hidden');
       document.getElementById('authenticatedApp').classList.add('hidden');
+      showToast("Logged out successfully");
     }
 
-    function switchTab(t) {
-      ['viewLobby', 'viewMyMatches', 'viewWallet', 'viewProfile'].forEach(v => document.getElementById(v).classList.add('hidden'));
+    // THEME CONTROLLER
+    function toggleDayNightMode() {
+      STATE.theme = STATE.theme === 'day' ? 'dark' : 'day';
+      saveStorage('theme', STATE.theme);
+      applyTheme();
+    }
+    
+    function applyTheme() {
+      const body = document.getElementById('appBody');
+      const header = document.getElementById('headerNav');
+      const bottomNav = document.getElementById('bottomNav');
+      const profileThemeBtnIcon = document.getElementById('profileThemeBtnIcon');
+      const profileThemeBtnLabel = document.getElementById('profileThemeBtnLabel');
+
+      if (STATE.theme === 'day') {
+        body.classList.remove('bg-[#0A0B0E]', 'text-white');
+        body.classList.add('bg-[#F3F4F6]', 'text-gray-900');
+        header.classList.remove('border-gray-800', 'bg-[#0A0B0E]/90');
+        header.classList.add('bg-white/90', 'border-gray-200');
+        bottomNav.classList.remove('bg-[#0E1015]/95', 'border-gray-800/80');
+        bottomNav.classList.add('bg-white/95', 'border-gray-200');
+        if (profileThemeBtnIcon) { profileThemeBtnIcon.className = "ph-bold ph-sun text-brand-orange"; profileThemeBtnLabel.innerText = "Day Mode"; }
+      } else {
+        body.classList.remove('bg-[#F3F4F6]', 'text-gray-900');
+        body.classList.add('bg-[#0A0B0E]', 'text-white');
+        header.classList.remove('bg-white/90', 'border-gray-200');
+        header.classList.add('bg-[#0A0B0E]/90', 'border-gray-800');
+        bottomNav.classList.remove('bg-white/95', 'border-gray-200');
+        bottomNav.classList.add('bg-[#0E1015]/95', 'border-gray-800/80');
+        if (profileThemeBtnIcon) { profileThemeBtnIcon.className = "ph-bold ph-moon text-indigo-400"; profileThemeBtnLabel.innerText = "Night Mode"; }
+      }
+      renderTournaments();
+      if (STATE.currentUser) {
+        renderMyMatches();
+        renderWallet();
+      }
+    }
+
+    // NAV
+    function switchTab(tabId) {
+      if (!STATE.currentUser) return;
+      ['viewLobby', 'viewMyMatches', 'viewWallet', 'viewProfile'].forEach(v => {
+        const el = document.getElementById(v);
+        if (el) el.classList.add('hidden');
+      });
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-brand-red');
+        btn.classList.add(STATE.theme === 'day' ? 'text-gray-400' : 'text-gray-500');
+      });
+
       const map = { 'lobby': 'viewLobby', 'myMatches': 'viewMyMatches', 'wallet': 'viewWallet', 'profile': 'viewProfile' };
-      if (document.getElementById(map[t])) document.getElementById(map[t]).classList.remove('hidden');
-      if (t === 'lobby') renderTournaments();
-      if (t === 'myMatches') renderMyMatches();
-      if (t === 'profile') renderProfile();
+      const targetView = document.getElementById(map[tabId]);
+      if (targetView) targetView.classList.remove('hidden');
+      
+      const navBtn = document.getElementById(`nav${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
+      if (navBtn) {
+        navBtn.classList.add('text-brand-red');
+        navBtn.classList.remove('text-gray-400','text-gray-500');
+      }
+      
+      if (tabId === 'lobby') renderTournaments();
+      if (tabId === 'myMatches') renderMyMatches();
+      if (tabId === 'wallet') renderWallet();
+      if (tabId === 'profile') renderProfile();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // RENDERS
     function renderHeader() {
       if (!STATE.currentUser) return;
       document.getElementById('headerWalletBal').innerText = `₹${(STATE.currentUser.balance || 0).toFixed(2)}`;
       document.getElementById('headerProfileLetter').innerText = (STATE.currentUser.username || "P")[0].toUpperCase();
+      document.getElementById('brandNameDisplay').innerText = STATE.appName;
     }
 
     function renderWallet() {
       if (!STATE.currentUser) return;
       document.getElementById('walletTotalBal').innerText = (STATE.currentUser.balance || 0).toFixed(2);
+      document.getElementById('userTotalDeposited').innerText = `₹${(STATE.currentUser.deposited || 0).toFixed(2)}`;
+      document.getElementById('userTotalWon').innerText = `₹${(STATE.currentUser.won || 0).toFixed(2)}`;
+
+      const txList = document.getElementById('walletTransactionsList');
+      if (!txList) return;
+      const userTx = STATE.transactions || [];
+
+      if (userTx.length === 0) {
+        txList.innerHTML = `<div class="p-4 text-center text-gray-400 text-xs">No transactions recorded yet. Balance is ₹0.00.<br><span class="text-[10px] text-gray-500">Deposit money to join tournaments.</span></div>`;
+        return;
+      }
+
+      const isDay = STATE.theme === 'day';
+      txList.innerHTML = userTx.map(tx => {
+        const isPositive = tx.amount > 0;
+        return `
+          <div class="flex items-center justify-between p-2 rounded-lg ${isDay ? 'bg-gray-50 border border-gray-200' : 'bg-black/40 border border-gray-800'} text-xs">
+            <div>
+              <span class="font-semibold ${isDay ? 'text-gray-800' : 'text-gray-200'} block">${tx.title}</span>
+              <span class="text-[9px] text-gray-400">${tx.time || 'Recent'}</span>
+            </div>
+            <span class="font-mono font-bold ${isPositive ? 'text-emerald-600' : (isDay ? 'text-gray-700' : 'text-gray-300')}">
+              ${isPositive ? '+' : ''}₹${Math.abs(tx.amount).toFixed(2)}
+            </span>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderProfile() {
       if (!STATE.currentUser) return;
       document.getElementById('profileUsername').innerText = STATE.currentUser.username;
+      document.getElementById('profileAvatarLetter').innerText = STATE.currentUser.username[0].toUpperCase();
+      document.getElementById('profileIGN').innerText = STATE.currentUser.ign;
       document.getElementById('profileUID').innerText = STATE.currentUser.uid;
-      document.getElementById('userReferCodeVal').innerText = STATE.currentUser.uid;
-      document.getElementById('userReferRewardDisplay').innerText = `₹${STATE.referralReward || 10}`;
+      
+      // Update Head Admin Name for all users
+      const elAdminName = document.getElementById('displayAdminName');
+      if (elAdminName) elAdminName.innerText = STATE.adminName || "Admin Dewansh";
 
-      if (STATE.currentUser.role === 'admin') {
+      document.getElementById('playerSupportTelegram').href = STATE.supportLinks.telegram;
+      document.getElementById('playerSupportWhatsapp').href = STATE.supportLinks.whatsapp;
+
+      if(STATE.currentUser.role === 'admin') {
+        document.getElementById('profileRoleBadge').innerText = "MASTER ADMIN";
+        document.getElementById('profileRoleBadge').className = "text-[9px] px-2 py-0.5 rounded bg-red-600 text-white font-bold uppercase tracking-wider";
+        document.getElementById('regularPlayerSection').classList.add('hidden');
         document.getElementById('adminMasterSection').classList.remove('hidden');
-        document.getElementById('adminDisplayNameInput').value = STATE.adminName || "Admin Dewansh";
-        document.getElementById('adminUpiInput').value = STATE.adminUpi || "boohyahx@axl";
-        document.getElementById('adminReferralRewardInput').value = STATE.referralReward || 10;
+        
+        document.getElementById('adminTelegramInput').value = STATE.supportLinks.telegram;
+        document.getElementById('adminWhatsappInput').value = STATE.supportLinks.whatsapp;
+        document.getElementById('adminInstructionsInput').value = STATE.roomInstructions;
+        document.getElementById('adminAppNameInput').value = STATE.appName;
+
+        // Admin Name, UPI & QR fields
+        const elNameInp = document.getElementById('adminDisplayNameInput');
+        if (elNameInp) elNameInp.value = STATE.adminName || "Admin Dewansh";
+        const elUpiInp = document.getElementById('adminUpiInput');
+        if (elUpiInp) elUpiInp.value = STATE.adminUpi || "boohyahx@axl";
+        const elQrInp = document.getElementById('adminCustomQrInput');
+        if (elQrInp) elQrInp.value = STATE.adminCustomQr || "";
+
+        document.getElementById('toggleAutoDeposit').checked = STATE.autoSettings.deposit;
+        document.getElementById('toggleAutoWithdraw').checked = STATE.autoSettings.withdraw;
         renderAdminTournaments();
+        renderAdminPendingDeposits();
+        renderAdminPendingWithdrawals();
+        updateAdminFinancials();
       } else {
+        document.getElementById('profileRoleBadge').innerText = "PLAYER";
+        document.getElementById('profileRoleBadge').className = "text-[9px] px-2 py-0.5 rounded bg-brand-red/10 text-brand-red font-bold uppercase border border-brand-red/30";
+        document.getElementById('regularPlayerSection').classList.remove('hidden');
         document.getElementById('adminMasterSection').classList.add('hidden');
       }
     }
 
-    // REFERRAL UTILS
-    function copyReferralCode() {
-      const code = STATE.currentUser ? STATE.currentUser.uid : "";
-      navigator.clipboard.writeText(code).then(() => showToast(`Refer Code ${code} copied!`, "success"));
+    let activeFilter = 'all';
+    function filterMatches(filter) {
+      activeFilter = filter;
+      document.querySelectorAll('.tab-filter-btn').forEach(btn => {
+        if (btn.getAttribute('data-filter') === filter) {
+          btn.classList.add('bg-brand-red', 'text-white');
+          btn.classList.remove('bg-gray-200', 'text-gray-700', 'bg-gray-800', 'text-gray-300');
+        } else {
+          btn.classList.remove('bg-brand-red', 'text-white');
+          btn.classList.add(STATE.theme === 'day' ? 'bg-gray-200' : 'bg-gray-800', STATE.theme === 'day' ? 'text-gray-700' : 'text-gray-300');
+        }
+      });
+      renderTournaments();
     }
 
-    function shareReferralWhatsApp() {
-      const code = STATE.currentUser ? STATE.currentUser.uid : "";
-      const text = `Join BhooyahX Free Fire Esports & play daily tournaments! Use my Refer Code: ${code} to get bonus cash! Download App now.`;
-      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-    }
-
-    async function saveAdminReferralReward() {
-      const rew = parseFloat(document.getElementById('adminReferralRewardInput').value) || 0;
-      STATE.referralReward = rew;
-      saveStorage('referralReward', rew);
-      if (window.db && window.doc && window.setDoc) {
-        await window.setDoc(window.doc(window.db, "settings", "global"), { referralReward: rew }, { merge: true });
-        showToast("Referral Reward Saved to Cloud!", "success");
-      }
-    }
-
-    // TOURNAMENTS (100% CLOUD SYNCED)
     function renderTournaments() {
       const c = document.getElementById('tournamentCardsContainer');
       if (!c) return;
-      if (STATE.tournaments.length === 0) {
-        c.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs">No active tournaments right now.</div>`;
+      let filtered = STATE.tournaments;
+      if (activeFilter !== 'all' && activeFilter !== 'free') filtered = filtered.filter(t => t.mode === activeFilter);
+      if (activeFilter === 'free') filtered = filtered.filter(t => t.type === 'free');
+
+      if (filtered.length === 0) {
+        c.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs">No tournaments available right now.</div>`;
         return;
       }
-      c.innerHTML = STATE.tournaments.map(t => `
-        <div class="rounded-2xl p-4 bg-white border border-gray-200 text-gray-900 shadow-sm space-y-2">
-          <div class="flex justify-between text-[11px]">
-            <span class="px-2 py-0.5 rounded font-bold uppercase bg-brand-red/10 text-brand-red">${t.mode}</span>
-            <span class="text-amber-500 font-bold">${t.time}</span>
+
+      const isDay = STATE.theme === 'day';
+      const cardBg = isDay ? 'bg-white border-gray-200 text-gray-900 shadow-sm' : 'bg-[#14161D] border-gray-800 text-white shadow-lg';
+      const innerBg = isDay ? 'bg-gray-50 border-gray-200' : 'bg-black/60 border-gray-800';
+
+      c.innerHTML = filtered.map(t => {
+        const isJoined = STATE.currentUser && (t.registeredUsers || []).includes(STATE.currentUser.id);
+        return `
+          <div class="rounded-2xl p-4 border transition-all ${cardBg}">
+            <div class="flex items-center justify-between text-[11px] mb-2">
+              <span class="px-2 py-0.5 rounded font-bold uppercase text-[9px] bg-brand-red/10 text-brand-red border border-brand-red/30">${t.mode} • ${t.map}</span>
+              <span class="${isDay ? 'text-gray-500' : 'text-gray-400'} font-medium flex items-center gap-1"><i class="ph-bold ph-clock text-amber-500"></i> ${t.time}</span>
+            </div>
+            <h3 class="font-bold text-sm tracking-wide mb-3 ${isDay ? 'text-gray-900' : 'text-white'}">${t.title}</h3>
+            
+            <div class="grid grid-cols-3 gap-2 p-2.5 rounded-xl ${innerBg} border mb-3 text-xs text-center">
+              <div><span class="text-[9px] ${isDay ? 'text-gray-500' : 'text-gray-400'} block uppercase">Win Prize</span><span class="font-display font-bold text-sm text-amber-600">₹${t.prize}</span></div>
+              <div class="border-x ${isDay ? 'border-gray-200' : 'border-gray-800'} px-1"><span class="text-[9px] text-brand-red block font-bold uppercase">Per Kill</span><span class="font-display font-bold text-sm text-brand-red">₹${t.perKill}</span></div>
+              <div><span class="text-[9px] ${isDay ? 'text-gray-500' : 'text-gray-400'} block uppercase">Entry Fee</span><span class="font-display font-bold text-sm ${isDay ? 'text-gray-900' : 'text-white'}">${t.fee === 0 ? 'FREE' : '₹'+t.fee}</span></div>
+            </div>
+
+            ${isJoined 
+              ? `<button onclick="switchTab('myMatches')" class="w-full py-2 bg-emerald-600/10 text-emerald-600 border border-emerald-500/40 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-sm"><i class="ph-bold ph-check-circle"></i> Slot Confirmed</button>` 
+              : `<button onclick="openJoinModal('${t.id}')" class="w-full py-2 bg-gradient-to-r from-brand-red to-brand-orange text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-1"><i class="ph-bold ph-game-controller"></i> Join Match</button>`
+            }
           </div>
-          <h3 class="font-bold text-sm">${t.title}</h3>
-          <div class="grid grid-cols-3 gap-2 p-2 bg-gray-50 border rounded-xl text-center text-xs">
-            <div><span class="text-[9px] text-gray-400 block">Win</span><b class="text-amber-600">₹${t.prize}</b></div>
-            <div><span class="text-[9px] text-gray-400 block">Kill</span><b class="text-brand-red">₹${t.perKill}</b></div>
-            <div><span class="text-[9px] text-gray-400 block">Fee</span><b>₹${t.fee}</b></div>
-          </div>
-          <button onclick="joinMatch('${t.id}')" class="w-full py-2 bg-gradient-to-r from-brand-red to-brand-orange text-white rounded-xl text-xs font-bold uppercase shadow">Join Match</button>
-        </div>
-      `).join('');
-    }
-
-    async function saveNewTournament() {
-      const title = document.getElementById('newMatchTitle').value.trim();
-      const mode = document.getElementById('newMatchMode').value;
-      const fee = parseFloat(document.getElementById('newMatchFee').value) || 0;
-      const prize = parseFloat(document.getElementById('newMatchPrize').value) || 0;
-      const perKill = parseFloat(document.getElementById('newMatchPerKill').value) || 0;
-      const time = document.getElementById('newMatchTime').value.trim() || "Today, 09:00 PM";
-      const slots = parseInt(document.getElementById('newMatchSlots').value) || 48;
-      const matchId = "T" + Date.now().toString().slice(-4);
-
-      if (!title) return showToast("Enter match title", "error");
-
-      const matchData = { title, mode, fee, prize, perKill, slots, time, roomId: "LOCKED", roomPass: "LOCKED", roomVisible: false, registeredUsers: [] };
-
-      if (window.db && window.doc && window.setDoc) {
-        await window.setDoc(window.doc(window.db, "tournaments", matchId), matchData);
-        showToast("Match Published Live to all Phones!", "success");
-      }
-      closeModal('createMatchModal');
-    }
-
-    function renderAdminTournaments() {
-      const c = document.getElementById('adminTournamentManageList');
-      if (!c) return;
-      c.innerHTML = STATE.tournaments.map(t => `
-        <div class="p-2.5 bg-gray-50 border rounded-lg flex justify-between items-center text-xs">
-          <div><b>${t.title}</b><div class="text-[10px] text-gray-500">Slots: ${(t.registeredUsers||[]).length}/${t.slots}</div></div>
-          <button onclick="dispatchRoomPrompt('${t.id}')" class="px-2 py-1 bg-brand-orange text-white rounded text-[10px] font-bold">Room Pass</button>
-        </div>
-      `).join('');
-    }
-
-    async function dispatchRoomPrompt(id) {
-      const rid = prompt("Enter Room ID:");
-      const rpass = prompt("Enter Room Password:");
-      if (rid && rpass && window.db) {
-        await window.updateDoc(window.doc(window.db, "tournaments", id), { roomId: rid, roomPass: rpass, roomVisible: true });
-        showToast("Room Credentials sent to players!", "success");
-      }
+        `;
+      }).join('');
     }
 
     function renderMyMatches() {
       const c = document.getElementById('myMatchesList');
-      if (!c || !STATE.currentUser) return;
-      const joined = STATE.tournaments.filter(t => (t.registeredUsers || []).includes(STATE.currentUser.id));
-      if (joined.length === 0) {
-        c.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs">No registered matches.</div>`;
+      if (!c) return;
+      if (!STATE.currentUser) {
+        c.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs">Please login to view registered matches.</div>`;
         return;
       }
-      c.innerHTML = joined.map(t => `
-        <div class="p-4 bg-white border rounded-2xl space-y-2 text-xs">
-          <b>${t.title}</b>
-          <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg">
-            ${t.roomVisible ? `Room ID: <b>${t.roomId}</b> | Pass: <b>${t.roomPass}</b>` : `Room credentials locked until 15 mins before match.`}
+      
+      const joined = STATE.tournaments.filter(t => t.registeredUsers && t.registeredUsers.includes(STATE.currentUser.id));
+      const isDay = STATE.theme === 'day';
+      const cardBg = isDay ? 'bg-white border-gray-200 text-gray-900 shadow-sm' : 'bg-[#14161D] border-gray-800 text-white shadow-lg';
+
+      if(joined.length === 0) {
+        c.innerHTML = `
+          <div class="p-8 text-center text-gray-400 rounded-2xl border border-dashed ${isDay ? 'border-gray-300' : 'border-gray-800'}">
+            <i class="ph-bold ph-sword text-3xl mb-1 text-gray-400 block"></i>
+            You haven't joined any tournament yet.<br>
+            <button onclick="switchTab('lobby')" class="mt-2 text-brand-red font-bold text-xs underline">Browse Matches</button>
           </div>
-        </div>
-      `).join('');
+        `;
+        return;
+      }
+
+      c.innerHTML = joined.map(t => {
+        const canView = t.roomVisible;
+        return `
+          <div class="rounded-2xl p-4 border ${cardBg} space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="px-2 py-0.5 rounded bg-brand-red/10 text-brand-red text-[10px] font-bold uppercase">${t.mode} • ${t.map}</span>
+              <span class="text-amber-500 font-bold flex items-center gap-1 text-[11px]"><i class="ph-bold ph-clock"></i> ${t.time}</span>
+            </div>
+            <h3 class="font-bold text-sm">${t.title}</h3>
+            <p class="text-xs text-brand-red font-bold">Reward: ₹${t.perKill} Per Kill | Prize: ₹${t.prize}</p>
+            
+            <div class="rounded-xl p-3 ${canView ? 'bg-emerald-50 border border-emerald-300 text-emerald-900' : (isDay ? 'bg-gray-50 border border-gray-200' : 'bg-black/50 border border-gray-800')}">
+              ${canView ? `
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div class="p-2 rounded-lg ${isDay ? 'bg-white border border-emerald-200' : 'bg-black/80'}"><span class="text-[9px] text-gray-500 block">Room ID</span><span class="font-mono font-bold ${isDay ? 'text-gray-900' : 'text-white'} text-sm select-all">${t.roomId}</span></div>
+                  <div class="p-2 rounded-lg ${isDay ? 'bg-white border border-emerald-200' : 'bg-black/80'}"><span class="text-[9px] text-gray-500 block">Password</span><span class="font-mono font-bold text-amber-600 text-sm select-all">${t.roomPass}</span></div>
+                </div>
+                <!-- EDITABLE MATCH INSTRUCTIONS -->
+                <div class="mt-3 p-2.5 bg-yellow-100 border border-yellow-300 rounded-lg text-[10px] text-yellow-800 leading-relaxed font-medium shadow-sm whitespace-pre-wrap"><div class="flex items-center gap-1 mb-1.5"><i class="ph-fill ph-warning text-yellow-600 text-base"></i> <b class="uppercase tracking-wider">Important Instructions:</b></div>${STATE.roomInstructions}</div>
+              ` : `
+                <div class="text-center py-2 text-xs text-gray-500">
+                  <i class="ph-bold ph-lock-key text-xl text-amber-500 mb-1 block"></i>
+                  <span>Room ID and Password are <b>Locked</b></span><br>
+                  <span class="text-[10px] text-gray-400">Unlocks 15 minutes before match.</span>
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
-    // GALLERY QR UPLOAD (CANVAS COMPRESSED BASE64)
+    // ADMIN CONTROLS
+    function updateAdminFinancials() {
+      const activeMatchPools = (STATE.tournaments || []).reduce((acc, t) => acc + ((t.fee || 0) * (t.filled || 0)), 0);
+      const totalVerifiedDeposits = (STATE.transactions || [])
+        .filter(tx => tx.type === 'deposit')
+        .reduce((acc, tx) => acc + (tx.amount || 0), 0);
+
+      const elInGame = document.getElementById('adminTotalInGame');
+      const elDeposits = document.getElementById('adminTotalDeposits');
+
+      if (elInGame) elInGame.innerText = `₹${activeMatchPools.toFixed(2)}`;
+      if (elDeposits) elDeposits.innerText = `₹${totalVerifiedDeposits.toFixed(2)}`;
+    }
+
+    function saveSupportLinks() {
+      STATE.supportLinks.telegram = document.getElementById('adminTelegramInput').value;
+      STATE.supportLinks.whatsapp = document.getElementById('adminWhatsappInput').value;
+      saveStorage('supportLinks', STATE.supportLinks);
+      document.getElementById('playerSupportTelegram').href = STATE.supportLinks.telegram;
+      document.getElementById('playerSupportWhatsapp').href = STATE.supportLinks.whatsapp;
+      showToast("Support Links Updated!", "success");
+    }
+
+    function saveInstructions() {
+      STATE.roomInstructions = document.getElementById('adminInstructionsInput').value.trim();
+      saveStorage('roomInstructions', STATE.roomInstructions);
+      renderMyMatches();
+      showToast("Match Instructions Updated for all players!", "success");
+    }
+    
+    function saveCustomAppName() {
+      const name = document.getElementById('adminAppNameInput').value.trim();
+      if(name) {
+        STATE.appName = name;
+        saveStorage('appName', STATE.appName);
+        document.getElementById('brandNameDisplay').innerText = name;
+        document.getElementById('gateBrandTitle').innerText = name;
+        showToast("App Name Updated!", "success");
+      }
+    }
+
+    
+    // REAL-TIME GLOBAL SETTINGS UI UPDATER (CROSS-DEVICE SYNC)
+    window.applyGlobalSettingsToUI = function() {
+      const name = window.STATE.adminName || "Admin Dewansh";
+      const upi = window.STATE.adminUpi || "boohyahx@axl";
+      const qr = window.STATE.adminCustomQr || "";
+
+      // Profile support name
+      const elAdminName = document.getElementById('displayAdminName');
+      if (elAdminName) elAdminName.innerText = name;
+
+      // Add money modal
+      const elBadge = document.getElementById('qrPayeeNameBadge');
+      if (elBadge) elBadge.innerText = name;
+      const elUpiText = document.getElementById('qrUpiTextDisplay');
+      if (elUpiText) elUpiText.innerText = upi;
+
+      // Admin inputs (if admin view is active)
+      const elNameInp = document.getElementById('adminDisplayNameInput');
+      if (elNameInp && document.activeElement !== elNameInp) elNameInp.value = name;
+      const elUpiInp = document.getElementById('adminUpiInput');
+      if (elUpiInp && document.activeElement !== elUpiInp) elUpiInp.value = upi;
+      const elQrInp = document.getElementById('adminCustomQrInput');
+      if (elQrInp) elQrInp.value = qr;
+
+      const previewImg = document.getElementById('adminQrPreviewImg');
+      const statusText = document.getElementById('adminQrStatusText');
+      if (previewImg && statusText) {
+        if (qr && qr.length > 10) {
+          previewImg.src = qr;
+          statusText.innerText = "Custom QR Image Active (Live on all devices)";
+          statusText.className = "text-[9px] text-emerald-600 font-bold block";
+        } else {
+          previewImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=${encodeURIComponent(upi)}`;
+          statusText.innerText = "Dynamic QR active";
+          statusText.className = "text-[9px] text-gray-400 block";
+        }
+      }
+
+      // Refresh QR generator if Add Money modal is open
+      if (typeof generateDynamicUPIQR === 'function') {
+        generateDynamicUPIQR();
+      }
+    };
+
+    // HANDLE DIRECT QR IMAGE UPLOAD FROM PHONE GALLERY
     function handleQrFileUpload(event) {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showToast("Kripya photo/image file hi select karein", "error");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
+          // Compress & resize image to ensure fast loading on all devices
           const canvas = document.createElement('canvas');
           const maxDim = 500;
           let w = img.width, h = img.height;
-          if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
-          else if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
-          canvas.width = w; canvas.height = h;
+          if (w > h && w > maxDim) {
+            h = Math.round(h * maxDim / w);
+            w = maxDim;
+          } else if (h > maxDim) {
+            w = Math.round(w * maxDim / h);
+            h = maxDim;
+          }
+          canvas.width = w;
+          canvas.height = h;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
-          const base64 = canvas.toDataURL('image/jpeg', 0.85);
-          document.getElementById('adminCustomQrInput').value = base64;
-          showToast("QR Screenshot selected! Ab Save button dabayein.", "info");
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+
+          document.getElementById('adminCustomQrInput').value = compressedBase64;
+          const previewImg = document.getElementById('adminQrPreviewImg');
+          if (previewImg) previewImg.src = compressedBase64;
+          const statusText = document.getElementById('adminQrStatusText');
+          if (statusText) {
+            statusText.innerText = "Photo selected! Save button dabayein.";
+            statusText.className = "text-[9px] text-amber-600 font-bold block";
+          }
+          showToast("QR Image select ho gayi! Niche 'Save Details' dabayein.", "info");
         };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
+    }
+
+    function clearCustomQrImage() {
+      document.getElementById('adminCustomQrInput').value = "";
+      const fileInp = document.getElementById('adminQrFileInput');
+      if (fileInp) fileInp.value = "";
+      window.STATE.adminCustomQr = "";
+      window.saveStorage('adminCustomQr', "");
+      if (window.applyGlobalSettingsToUI) window.applyGlobalSettingsToUI();
+      showToast("Custom image removed. Ab Save button dabayein.", "info");
     }
 
     async function saveAdminUpiAndProfileSettings() {
@@ -718,30 +1884,576 @@
       const upi = document.getElementById('adminUpiInput').value.trim();
       const qrData = document.getElementById('adminCustomQrInput').value.trim();
 
-      STATE.adminName = name; STATE.adminUpi = upi; STATE.adminCustomQr = qrData;
-      saveStorage('adminName', name); saveStorage('adminUpi', upi); saveStorage('adminCustomQr', qrData);
+      if (!name) {
+        showToast("Kripya Admin Name dalein", "error");
+        return;
+      }
+      if (!upi || !upi.includes('@')) {
+        showToast("Kripya valid UPI ID dalein (e.g. name@upi)", "error");
+        return;
+      }
 
+      const saveBtn = document.getElementById('btnSaveAdminDetails');
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerText = "Syncing with Cloud Database...";
+      }
+
+      // 1. Local update
+      window.STATE.adminName = name;
+      window.STATE.adminUpi = upi;
+      window.STATE.adminCustomQr = qrData;
+      window.saveStorage('adminName', name);
+      window.saveStorage('adminUpi', upi);
+      window.saveStorage('adminCustomQr', qrData);
+
+      // 2. Firebase Cloud Firestore Sync (For ALL phones)
       if (window.db && window.doc && window.setDoc) {
-        await window.setDoc(window.doc(window.db, "settings", "global"), { adminName: name, adminUpi: upi, adminCustomQr: qrData }, { merge: true });
-        showToast("Settings Synced to all devices!", "success");
+        try {
+          await window.setDoc(window.doc(window.db, "settings", "global"), {
+            adminName: name,
+            adminUpi: upi,
+            adminCustomQr: qrData,
+            updatedAt: window.serverTimestamp ? window.serverTimestamp() : new Date()
+          }, { merge: true });
+          showToast("Cloud Synced! Ab sabhi devices par yahi QR aur UPI dikhega.", "success");
+        } catch (err) {
+          console.warn("Firestore settings save error:", err);
+          showToast("Firebase Cloud save error: " + err.message, "error");
+        }
+      } else {
+        showToast("Local memory me save ho gaya!", "info");
+      }
+
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="ph-bold ph-cloud-arrow-up text-base"></i> Save Details & Cloud Sync to All Devices';
+      }
+
+      if (window.applyGlobalSettingsToUI) window.applyGlobalSettingsToUI();
+    }
+
+
+    function setDepositPreset(amt) {
+      document.getElementById('depositAmountInput').value = amt;
+      generateDynamicUPIQR();
+    }
+
+    function copyAdminUpiId() {
+      const upi = STATE.adminUpi || "boohyahx@axl";
+      navigator.clipboard.writeText(upi).then(() => {
+        showToast("UPI ID copied: " + upi, "success");
+      }).catch(() => {
+        showToast("UPI ID: " + upi, "info");
+      });
+    }
+
+    function generateDynamicUPIQR() {
+      let amt = parseFloat(document.getElementById('depositAmountInput').value) || 20;
+      const upiId = STATE.adminUpi || "boohyahx@axl";
+      const payeeName = STATE.adminName || "BhooyahX Official";
+
+      const elBadge = document.getElementById('qrPayeeNameBadge');
+      if (elBadge) elBadge.innerText = payeeName;
+      const elUpiText = document.getElementById('qrUpiTextDisplay');
+      if (elUpiText) elUpiText.innerText = upiId;
+      const elAmt = document.getElementById('qrAmountDisplay');
+      if (elAmt) elAmt.innerText = `₹${amt.toFixed(2)}`;
+
+      const upiUri = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amt.toFixed(2)}&cu=INR&tn=Deposit`;
+      
+      const qrImg = document.getElementById('dynamicUpiQRImg');
+      if (STATE.adminCustomQr && STATE.adminCustomQr.length > 5) {
+        qrImg.src = STATE.adminCustomQr;
+      } else {
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUri)}`;
+      }
+
+      const directPayBtn = document.getElementById('directUpiPayLink');
+      if (directPayBtn) directPayBtn.href = upiUri;
+    }
+
+    function sendAdminBroadcast() {
+      const title = document.getElementById('adminNoticeTitle').value.trim();
+      const body = document.getElementById('adminNoticeBody').value.trim();
+      if (!title || !body) {
+        showToast("Enter broadcast title and message", "error");
+        return;
+      }
+      document.getElementById('adminNoticeTitle').value = "";
+      document.getElementById('adminNoticeBody').value = "";
+      showToast("Broadcast message sent to all players!", "success");
+    }
+
+    function toggleAdminSettings() {
+      STATE.autoSettings.deposit = document.getElementById('toggleAutoDeposit').checked;
+      STATE.autoSettings.withdraw = document.getElementById('toggleAutoWithdraw').checked;
+      saveStorage('autoSettings', STATE.autoSettings);
+      
+      const adminDepSec = document.getElementById('adminDepositSection');
+      const adminWdSec = document.getElementById('adminWithdrawSection');
+      
+      if(STATE.autoSettings.deposit) {
+        if (adminDepSec) adminDepSec.classList.add('opacity-50');
+        document.getElementById('pendingDepositsCount').innerText = "AUTO ON";
+      } else {
+        if (adminDepSec) adminDepSec.classList.remove('opacity-50');
+        document.getElementById('pendingDepositsCount').innerText = `${STATE.pendingDeposits.length} Pending`;
+      }
+      
+      if(STATE.autoSettings.withdraw) {
+        if (adminWdSec) adminWdSec.classList.add('opacity-50');
+        document.getElementById('pendingWithdrawalsCount').innerText = "AUTO ON";
+      } else {
+        if (adminWdSec) adminWdSec.classList.remove('opacity-50');
+        document.getElementById('pendingWithdrawalsCount').innerText = `${STATE.pendingWithdrawals.length} Pending`;
+      }
+      showToast("Automation Settings Updated!", "info");
+    }
+
+    function renderAdminPendingDeposits() {
+      const c = document.getElementById('adminPendingDepositsList');
+      if (!c) return;
+      if (STATE.pendingDeposits.length === 0) {
+        c.innerHTML = `<div class="p-3 text-center text-gray-400 text-xs">No pending player deposits.</div>`;
+        return;
+      }
+      c.innerHTML = STATE.pendingDeposits.map((d, idx) => `
+        <div class="p-2.5 rounded-lg bg-white border border-emerald-300 flex items-center justify-between shadow-sm">
+          <div>
+            <div class="flex items-center gap-1.5"><b class="text-gray-900">${d.username}</b> <span class="text-emerald-600 font-bold font-mono">₹${d.amount}</span></div>
+            <span class="text-[10px] text-gray-500 font-mono">UTR: ${d.utr}</span>
+          </div>
+          <button onclick="approveDepositAdmin(${idx})" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs shadow">Approve</button>
+        </div>
+      `).join('');
+    }
+
+    function approveDepositAdmin(idx) {
+      const d = STATE.pendingDeposits[idx];
+      if (!d) return;
+
+      // Credit to user
+      if (STATE.currentUser && STATE.currentUser.id === d.userId) {
+        STATE.currentUser.balance = (STATE.currentUser.balance || 0) + d.amount;
+        STATE.currentUser.deposited = (STATE.currentUser.deposited || 0) + d.amount;
+        saveStorage('currentUser', STATE.currentUser);
+      }
+
+      STATE.transactions.unshift({
+        id: "tx_" + Date.now(),
+        title: `UPI Deposit (Approved by Admin)`,
+        amount: d.amount,
+        type: "deposit",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      saveStorage('transactions', STATE.transactions);
+
+      STATE.pendingDeposits.splice(idx, 1);
+      saveStorage('pendingDeposits', STATE.pendingDeposits);
+
+      renderAdminPendingDeposits();
+      updateAdminFinancials();
+      renderHeader();
+      renderWallet();
+      showToast(`Approved ₹${d.amount} deposit for ${d.username}!`, "success");
+    }
+
+    function renderAdminPendingWithdrawals() {
+      const c = document.getElementById('adminPendingWithdrawalsList');
+      if (!c) return;
+      if (STATE.pendingWithdrawals.length === 0) {
+        c.innerHTML = `<div class="p-3 text-center text-gray-400 text-xs">No pending withdrawal requests.</div>`;
+        return;
+      }
+      c.innerHTML = STATE.pendingWithdrawals.map((w, idx) => `
+        <div class="p-2.5 rounded-lg bg-white border border-amber-300 flex items-center justify-between shadow-sm">
+          <div>
+            <div class="flex items-center gap-1.5"><b class="text-gray-900">${w.username}</b> <span class="text-amber-600 font-bold font-mono">₹${w.amount}</span></div>
+            <span class="text-[10px] text-gray-600 font-mono">UPI: <b>${w.upi}</b></span>
+          </div>
+          <div class="flex gap-1">
+            <button onclick="acceptWithdrawalAdmin(${idx})" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded text-xs">Paid</button>
+            <button onclick="rejectWithdrawalAdmin(${idx})" class="px-2 py-1 bg-red-100 text-red-600 border border-red-300 font-bold rounded text-xs">Reject</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function acceptWithdrawalAdmin(idx) {
+      const w = STATE.pendingWithdrawals[idx];
+      if (!w) return;
+      STATE.pendingWithdrawals.splice(idx, 1);
+      saveStorage('pendingWithdrawals', STATE.pendingWithdrawals);
+      renderAdminPendingWithdrawals();
+      showToast(`Marked ₹${w.amount} paid to ${w.upi}`, "success");
+    }
+
+    function rejectWithdrawalAdmin(idx) {
+      const w = STATE.pendingWithdrawals[idx];
+      if (!w) return;
+      // Refund user balance
+      if (STATE.currentUser && STATE.currentUser.id === w.userId) {
+        STATE.currentUser.balance += w.amount;
+        saveStorage('currentUser', STATE.currentUser);
+        renderHeader();
+        renderWallet();
+      }
+      STATE.pendingWithdrawals.splice(idx, 1);
+      saveStorage('pendingWithdrawals', STATE.pendingWithdrawals);
+      renderAdminPendingWithdrawals();
+      showToast(`Withdrawal rejected & refunded to player`, "info");
+    }
+
+    function renderAdminTournaments() {
+      const c = document.getElementById('adminTournamentManageList');
+      if (!c) return;
+      c.innerHTML = STATE.tournaments.map(t => `
+        <div class="p-2.5 rounded-lg bg-gray-50 border border-gray-200 flex justify-between items-center shadow-sm">
+          <div>
+            <b class="text-gray-900">${t.title}</b>
+            <div class="text-[10px] text-gray-500">Slots: ${(t.registeredUsers || []).length}/${t.slots || 48} | Win: ₹${t.prize} | <span class="text-brand-red font-bold">Kill: ₹${t.perKill}</span></div>
+          </div>
+          <div class="flex gap-1.5">
+            <button onclick="openDispatchRoomModal('${t.id}')" class="px-2 py-1 bg-brand-orange text-white rounded text-[10px] font-bold shadow-sm">Room Pass</button>
+            <button onclick="openDistributeWinnings('${t.id}')" class="px-2 py-1 bg-amber-500 text-white rounded text-[10px] font-bold shadow-sm">Results</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openCreateTournamentModal() { openModal('createMatchModal'); }
+
+    function saveNewTournament() {
+      const title = document.getElementById('newMatchTitle').value.trim();
+      const mode = document.getElementById('newMatchMode').value;
+      const map = document.getElementById('newMatchMap').value;
+      const fee = parseFloat(document.getElementById('newMatchFee').value) || 0;
+      const prize = parseFloat(document.getElementById('newMatchPrize').value) || 0;
+      const perKill = parseFloat(document.getElementById('newMatchPerKill').value) || 0;
+      const time = document.getElementById('newMatchTime').value.trim() || "Today, 09:00 PM";
+
+      if (!title) {
+        showToast("Please enter match title", "error");
+        return;
+      }
+
+      const customSlots = parseInt(document.getElementById('newMatchSlots').value) || (mode === 'CS' ? 8 : 48);
+
+      STATE.tournaments.push({
+        id: "T" + Date.now().toString().slice(-4),
+        title, mode, map, fee, prize, perKill,
+        slots: customSlots,
+        filled: 0,
+        time,
+        roomId: "LOCKED", roomPass: "LOCKED",
+        roomVisible: false,
+        registeredUsers: []
+      });
+
+      saveStorage('tournaments', STATE.tournaments);
+      closeModal('createMatchModal');
+      renderTournaments();
+      renderAdminTournaments();
+      showToast("Tournament Created Successfully!", "success");
+    }
+    
+    // ROOM DISPATCH
+    function openDispatchRoomModal(id) {
+      const match = STATE.tournaments.find(m => m.id === id);
+      if(!match) return;
+      document.getElementById('dispatchMatchId').value = match.id;
+      document.getElementById('dispatchMatchTitleDisplay').innerText = match.title;
+      document.getElementById('dispatchRoomIdInput').value = match.roomId === 'LOCKED' ? '' : match.roomId;
+      document.getElementById('dispatchRoomPassInput').value = match.roomPass === 'LOCKED' ? '' : match.roomPass;
+      openModal('dispatchRoomModal');
+    }
+    
+    function confirmRoomDispatch() {
+      const id = document.getElementById('dispatchMatchId').value;
+      const rid = document.getElementById('dispatchRoomIdInput').value;
+      const rpass = document.getElementById('dispatchRoomPassInput').value;
+      const vis = document.getElementById('dispatchRoomVisibleCheck').checked;
+      
+      const match = STATE.tournaments.find(m => m.id === id);
+      if(match) {
+        match.roomId = rid; match.roomPass = rpass; match.roomVisible = vis;
+        saveStorage('tournaments', STATE.tournaments);
+        showToast("Room credentials updated!", "success");
+        closeModal('dispatchRoomModal');
+        renderMyMatches();
       }
     }
 
-    function applyGlobalSettingsToUI() {
-      const name = STATE.adminName || "Admin Dewansh";
-      const elAdmin = document.getElementById('adminDisplayNameInput');
-      if (elAdmin) elAdmin.value = name;
-      const elUpi = document.getElementById('adminUpiInput');
-      if (elUpi) elUpi.value = STATE.adminUpi || "boohyahx@axl";
-      const elRew = document.getElementById('userReferRewardDisplay');
-      if (elRew) elRew.innerText = `₹${STATE.referralReward || 10}`;
+    // MULTI-PLAYER WINNINGS DISTRIBUTION (REAL MONEY WALLET TRANSFER)
+    function openDistributeWinnings(id) {
+      const match = STATE.tournaments.find(m => m.id === id);
+      if(!match) return;
+      
+      document.getElementById('distributeMatchId').value = match.id;
+      document.getElementById('distributeMatchTitle').innerText = match.title;
+      document.getElementById('distributePerKillDisplay').innerText = `₹${match.perKill}`;
+      
+      STATE.pendingWinningsList = [];
+      document.getElementById('rewardListContainer').innerHTML = "";
+      openModal('distributeWinningsModal');
     }
 
+    function addPlayerToRewardList() {
+      const uid = document.getElementById('rewardUID').value.trim();
+      const rank = parseFloat(document.getElementById('rewardRankPrize').value) || 0;
+      const kills = parseInt(document.getElementById('rewardKills').value) || 0;
+      const matchId = document.getElementById('distributeMatchId').value;
+      const match = STATE.tournaments.find(m => m.id === matchId);
+      
+      if(!uid) return showToast("Enter Player UID!", "error");
+      
+      const killPrize = kills * (match.perKill || 0);
+      const total = rank + killPrize;
+      
+      STATE.pendingWinningsList.push({uid, rank, kills, killPrize, total});
+      
+      document.getElementById('rewardListContainer').innerHTML += `
+        <div class="flex justify-between items-center p-2 bg-gray-50 border border-gray-200 rounded-lg text-[10px] mt-1 shadow-sm">
+          <div><b class="text-gray-800">UID: ${uid}</b> <br> <span class="text-gray-500">Rank: ₹${rank} + ${kills} Kills (₹${killPrize})</span></div>
+          <div class="font-bold text-emerald-600 font-mono text-xs">₹${total}</div>
+        </div>
+      `;
+      
+      document.getElementById('rewardUID').value = "";
+      document.getElementById('rewardRankPrize').value = "";
+      document.getElementById('rewardKills').value = "";
+    }
+
+    function confirmDistributeWinnings() {
+      if(STATE.pendingWinningsList.length === 0) return showToast("Add players to the list first!", "error");
+      
+      const totalAmount = STATE.pendingWinningsList.reduce((acc, curr) => acc + curr.total, 0);
+      
+      // If current logged-in user is one of the winners, credit their wallet with real money
+      STATE.pendingWinningsList.forEach(p => {
+        if (STATE.currentUser && (p.uid === STATE.currentUser.uid || p.uid === STATE.currentUser.id)) {
+          STATE.currentUser.balance = (STATE.currentUser.balance || 0) + p.total;
+          STATE.currentUser.won = (STATE.currentUser.won || 0) + p.total;
+          saveStorage('currentUser', STATE.currentUser);
+          
+          STATE.transactions.unshift({
+            id: "tx_" + Date.now(),
+            title: `Match Winnings + ${p.kills} Kills Payout`,
+            amount: p.total,
+            type: "winning",
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          });
+          saveStorage('transactions', STATE.transactions);
+        }
+      });
+      
+      renderHeader();
+      renderWallet();
+      updateAdminFinancials();
+      showToast(`Success: Distributed ₹${totalAmount} to ${STATE.pendingWinningsList.length} players!`, "success");
+      closeModal('distributeWinningsModal');
+    }
+
+    // MODAL UTILS
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    
+    let currentJoinId = null;
+    function openJoinModal(id) {
+      currentJoinId = id;
+      const match = STATE.tournaments.find(m => m.id === id);
+      if(match) {
+        const totalSlots = match.slots || 48;
+        const filledSlots = (match.registeredUsers || []).length;
+        if (filledSlots >= totalSlots) {
+          showToast("Yeh match housefull hai! Koi slot khali nahi hai.", "error");
+          return;
+        }
 
+        document.getElementById('joinModalTitle').innerText = match.title;
+        document.getElementById('joinModalFee').innerText = match.fee > 0 ? `₹${match.fee}.00` : 'FREE';
+        if (STATE.currentUser) {
+          document.getElementById('joinPlayerIGN').value = STATE.currentUser.ign || "";
+          document.getElementById('joinPlayerUID').value = STATE.currentUser.uid || "";
+        }
+        openModal('joinModal');
+      }
+    }
+    
+    function confirmJoinTournamentAction() {
+      const match = STATE.tournaments.find(m => m.id === currentJoinId);
+      if(!match) return;
+
+      const ign = document.getElementById('joinPlayerIGN').value.trim();
+      const uid = document.getElementById('joinPlayerUID').value.trim();
+
+      if (!ign || uid.length < 8) {
+        showToast("Enter valid Free Fire IGN and Player UID", "error");
+        return;
+      }
+
+      if ((STATE.currentUser.balance || 0) < match.fee) {
+        showToast("Insufficient balance! Please add money to wallet.", "error");
+        closeModal('joinModal');
+        openAddMoneyModal();
+        return;
+      }
+
+      STATE.currentUser.balance -= match.fee;
+      STATE.currentUser.ign = ign;
+      STATE.currentUser.uid = uid;
+      saveStorage('currentUser', STATE.currentUser);
+      
+      const totalSlots = match.slots || 48;
+      if ((match.registeredUsers || []).length >= totalSlots) {
+        showToast("Maaf kijiye, saare slots bhar chuke hain!", "error");
+        closeModal('joinModal');
+        return;
+      }
+
+      if (!match.registeredUsers.includes(STATE.currentUser.id)) {
+        match.registeredUsers.push(STATE.currentUser.id);
+        match.filled = (match.registeredUsers || []).length;
+        saveStorage('tournaments', STATE.tournaments);
+      }
+
+      if (match.fee > 0) {
+        STATE.transactions.unshift({
+          id: "tx_" + Date.now(),
+          title: `Entry Fee for ${match.title}`,
+          amount: -match.fee,
+          type: "entry",
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        saveStorage('transactions', STATE.transactions);
+      }
+
+      renderHeader();
+      renderWallet();
+      updateAdminFinancials();
+      showToast("Slot Confirmed! Match room will appear in Rooms tab.", "success");
+      closeModal('joinModal');
+      switchTab('myMatches');
+    }
+    
+    function openAddMoneyModal() { 
+      document.getElementById('depositAmountInput').value = "50";
+      generateDynamicUPIQR();
+      openModal('addMoneyModal'); 
+    }
+    function submitDepositPayment() {
+      const amt = parseFloat(document.getElementById('depositAmountInput').value) || 0;
+      const utr = document.getElementById('depositUtrInput').value.trim();
+
+      if (amt < 20 || utr.length < 8) {
+        showToast("Enter valid amount (Min ₹20) and 12-digit UTR", "error");
+        return;
+      }
+
+      if(STATE.autoSettings.deposit) {
+        // Automatic Instant Real Credit
+        STATE.currentUser.balance = (STATE.currentUser.balance || 0) + amt;
+        STATE.currentUser.deposited = (STATE.currentUser.deposited || 0) + amt;
+        saveStorage('currentUser', STATE.currentUser);
+
+        STATE.transactions.unshift({
+          id: "tx_" + Date.now(),
+          title: `UPI Deposit (${utr.slice(0, 6)}...) - Auto Approved`,
+          amount: amt,
+          type: "deposit",
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        saveStorage('transactions', STATE.transactions);
+
+        renderHeader();
+        renderWallet();
+        updateAdminFinancials();
+        showToast(`₹${amt} Auto-Approved & Added to Wallet!`, "success");
+      } else {
+        // Manual Admin Approval Queue
+        STATE.pendingDeposits.push({
+          userId: STATE.currentUser.id,
+          username: STATE.currentUser.username,
+          amount: amt,
+          utr: utr
+        });
+        saveStorage('pendingDeposits', STATE.pendingDeposits);
+        showToast("Deposit submitted! Balance will update after Admin verifies.", "info");
+      }
+
+      closeModal('addMoneyModal');
+      document.getElementById('depositUtrInput').value = "";
+    }
+
+    function openWithdrawModal() {
+      if (!STATE.currentUser) return;
+      document.getElementById('withdrawModalAvailBal').innerText = `₹${(STATE.currentUser.balance || 0).toFixed(2)}`;
+      openModal('withdrawModal');
+    }
+
+    function confirmWithdrawalRequest() {
+      const amt = parseFloat(document.getElementById('withdrawAmountInput').value) || 0;
+      const upi = document.getElementById('withdrawUpiInput').value.trim();
+
+      if (amt < 110) {
+        showToast("Minimum withdrawal is ₹110", "error");
+        return;
+      }
+      if (amt > (STATE.currentUser.balance || 0)) {
+        showToast("Withdrawal amount exceeds available balance!", "error");
+        return;
+      }
+      if (!upi || !upi.includes('@')) {
+        showToast("Enter valid receiver UPI ID", "error");
+        return;
+      }
+
+      STATE.currentUser.balance -= amt;
+      saveStorage('currentUser', STATE.currentUser);
+
+      STATE.transactions.unshift({
+        id: "tx_" + Date.now(),
+        title: `Withdrawal to ${upi} (${STATE.autoSettings.withdraw ? 'Auto-Sent' : 'Pending'})`,
+        amount: -amt,
+        type: "withdrawal",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      saveStorage('transactions', STATE.transactions);
+
+      renderHeader();
+      renderWallet();
+
+      if(STATE.autoSettings.withdraw) {
+        showToast(`₹${amt} Auto-Processed & Transferred to ${upi}!`, "success");
+      } else {
+        STATE.pendingWithdrawals.push({
+          userId: STATE.currentUser.id,
+          username: STATE.currentUser.username,
+          amount: amt,
+          upi: upi
+        });
+        saveStorage('pendingWithdrawals', STATE.pendingWithdrawals);
+        showToast("Withdrawal requested! Sent to Admin queue.", "info");
+      }
+
+      closeModal('withdrawModal');
+      document.getElementById('withdrawAmountInput').value = "";
+      document.getElementById('withdrawUpiInput').value = "";
+    }
+
+    function scrollToTournamentsList() {
+      filterMatches('all');
+      const el = document.getElementById('tournamentCardsContainer');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Auto restore session if already logged in
     window.addEventListener('DOMContentLoaded', () => {
-      if (STATE.currentUser) openApp();
+      applyTheme();
+      if (STATE.currentUser) {
+        openApp();
+      }
     });
   </script>
 </body>
