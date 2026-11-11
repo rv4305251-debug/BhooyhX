@@ -211,3 +211,538 @@
           <div class="flex-1">
             <h3 id="profileUsername" class="font-bold text-base text-gray-900">Player</h3>
             <p class="text-xs text-gray-500">FF UID: <span id="profileUID" class="text-amber-600 font-mono font-bold">-</span></p>
+          </div>
+          <button onclick="handleFirebaseLogout()" class="p-2 text-gray-400 hover:text-red-500"><i class="ph-bold ph-sign-out text-lg"></i></button>
+        </div>
+
+        <!-- REFER & EARN CARD (USER VIEW) -->
+        <div class="rounded-2xl p-4 bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 text-white shadow-md relative overflow-hidden" id="userReferralCard">
+          <div class="relative z-10 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-wider bg-black/25 px-2.5 py-0.5 rounded-full">Refer & Earn Real Cash</span>
+              <span class="text-xs font-bold text-yellow-200 flex items-center gap-1 font-display">
+                <i class="ph-bold ph-coins"></i> <span id="userReferRewardDisplay">₹10</span> per Refer
+              </span>
+            </div>
+            <div>
+              <h4 class="font-gaming text-2xl font-bold uppercase tracking-wider leading-tight">Apne Squad Ko Invite Karein</h4>
+              <p class="text-[11px] text-white/90">Har player jo aapke UID code se judega, aapko turant cash reward milega.</p>
+            </div>
+            <div class="flex items-center gap-2 pt-1">
+              <div class="flex-1 bg-black/30 backdrop-blur-md border border-white/20 rounded-xl px-3 py-2 flex items-center justify-between">
+                <div>
+                  <span class="text-[9px] text-white/70 block uppercase">Aapka Refer Code:</span>
+                  <span id="userReferCodeVal" class="font-mono font-bold text-sm tracking-wider select-all text-yellow-300">UID</span>
+                </div>
+                <button onclick="copyReferralCode()" class="px-2.5 py-1 bg-white text-gray-900 rounded-lg text-[10px] font-bold shadow hover:bg-gray-100 flex items-center gap-1">
+                  <i class="ph-bold ph-copy"></i> Copy
+                </button>
+              </div>
+              <button onclick="shareReferralWhatsApp()" class="py-2.5 px-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition active:scale-95">
+                <i class="ph-bold ph-whatsapp-logo text-lg"></i> Share
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MASTER ADMIN STUDIO -->
+        <div id="adminMasterSection" class="hidden space-y-4">
+          <!-- REFERRAL REWARD CONTROLLER (ADMIN) -->
+          <div class="rounded-xl border border-amber-300 bg-amber-50/50 p-4 space-y-3 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+              <i class="ph-bold ph-gift text-base text-brand-orange"></i> Refer & Earn Reward Settings
+            </h3>
+            <p class="text-[11px] text-gray-600">Ek player ko refer karne par refer karne wale ko kitna amount (₹) milega:</p>
+            <div class="flex items-center gap-2">
+              <input type="number" id="adminReferralRewardInput" value="10" min="0" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-gray-900 font-bold text-xs outline-none">
+              <button onclick="saveAdminReferralReward()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-xs shadow">Save Reward</button>
+            </div>
+          </div>
+
+          <!-- ADMIN UPI & QR SETTINGS WITH DIRECT GALLERY UPLOAD -->
+          <div class="rounded-xl border border-emerald-300 bg-white p-4 space-y-3 shadow-sm">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
+              <i class="ph-bold ph-qr-code text-base"></i> Admin Name, UPI ID & QR Code Settings
+            </h3>
+            <div class="space-y-2 text-xs">
+              <div>
+                <label class="block text-gray-700 font-semibold mb-0.5">Admin Display Name:</label>
+                <input type="text" id="adminDisplayNameInput" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 outline-none">
+              </div>
+              <div>
+                <label class="block text-gray-700 font-semibold mb-0.5">Admin Receiving UPI ID:</label>
+                <input type="text" id="adminUpiInput" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 font-mono outline-none">
+              </div>
+              <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+                <label class="block text-emerald-900 font-bold mb-0.5">Upload QR Scanner Photo from Gallery:</label>
+                <input type="file" id="adminQrFileInput" accept="image/*" onchange="handleQrFileUpload(event)" class="w-full text-xs text-gray-700 bg-white p-1 rounded-lg border border-emerald-200">
+                <input type="hidden" id="adminCustomQrInput" value="">
+              </div>
+              <button onclick="saveAdminUpiAndProfileSettings()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs shadow">Save Details & Cloud Sync to All Devices</button>
+            </div>
+          </div>
+
+          <!-- TOURNAMENT MANAGER -->
+          <div class="rounded-xl border border-gray-200 bg-white p-4 space-y-3 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
+                <i class="ph-bold ph-trophy text-brand-red"></i> Tournament Manager
+              </h3>
+              <button onclick="openModal('createMatchModal')" class="px-2.5 py-1 bg-brand-red text-white text-xs font-bold rounded-lg">+ New Match</button>
+            </div>
+            <div id="adminTournamentManageList" class="space-y-2 text-xs"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FIXED BOTTOM NAVIGATION BAR -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-2 py-1.5 mobile-bottom-nav transition-colors duration-300 w-full" id="bottomNav">
+      <div class="max-w-md mx-auto flex items-center justify-around text-[10px] font-bold font-display uppercase tracking-wider">
+        <button onclick="switchTab('lobby')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-brand-red" id="navLobby">
+          <i class="ph-bold ph-game-controller text-xl"></i><span>Lobby</span>
+        </button>
+        <button onclick="switchTab('myMatches')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-gray-400" id="navMyMatches">
+          <i class="ph-bold ph-sword text-xl"></i><span>Rooms</span>
+        </button>
+        <button onclick="switchTab('wallet')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-gray-400" id="navWallet">
+          <i class="ph-bold ph-wallet text-xl"></i><span>Wallet</span>
+        </button>
+        <button onclick="switchTab('profile')" class="nav-btn flex flex-col items-center gap-1 py-1 px-2.5 text-gray-400" id="navProfile">
+          <i class="ph-bold ph-user-gear text-xl"></i><span>Profile</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- CREATE MATCH MODAL -->
+  <div id="createMatchModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 space-y-3 relative text-gray-900 shadow-2xl">
+      <button onclick="closeModal('createMatchModal')" class="absolute top-3 right-3 text-gray-400"><i class="ph-bold ph-x text-lg"></i></button>
+      <h3 class="text-sm font-bold uppercase font-display">Create Match</h3>
+      <div class="space-y-2 text-xs">
+        <input type="text" id="newMatchTitle" placeholder="Match Title (e.g. Bermuda Showdown)" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 outline-none">
+        <div class="grid grid-cols-2 gap-2">
+          <select id="newMatchMode" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 outline-none">
+            <option value="Solo">Solo (BR)</option><option value="Squad">Squad (BR)</option><option value="CS">Clash Squad</option>
+          </select>
+          <input type="number" id="newMatchSlots" value="48" placeholder="Slots" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 outline-none">
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <input type="number" id="newMatchFee" value="50" placeholder="Fee" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2">
+          <input type="number" id="newMatchPrize" value="1800" placeholder="Prize" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2">
+          <input type="number" id="newMatchPerKill" value="15" placeholder="Kill ₹" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2">
+        </div>
+        <input type="text" id="newMatchTime" placeholder="Match Time (e.g. 08:30 PM)" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2">
+      </div>
+      <button onclick="saveNewTournament()" class="w-full py-2 bg-brand-red text-white font-bold rounded-xl text-xs uppercase shadow">Publish to All Phones</button>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toastContainer" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 pointer-events-none space-y-2 w-max max-w-[90vw]"></div>
+
+  <!-- FIREBASE MODULE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDGLvimVESYyDbeg40ugg31DTHkddnvPRI",
+      authDomain: "bhooyahx.firebaseapp.com",
+      projectId: "bhooyahx",
+      storageBucket: "bhooyahx.firebasestorage.app",
+      messagingSenderId: "887812402671",
+      appId: "1:887812402671:web:a9fd998f66a323a40d1a1a",
+      measurementId: "G-H3Z339YV8V"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.auth = auth; window.db = db;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+    window.signOut = signOut;
+    window.doc = doc; window.getDoc = getDoc; window.setDoc = setDoc;
+    window.updateDoc = updateDoc; window.collection = collection;
+    window.query = query; window.where = where; window.getDocs = getDocs;
+    window.onSnapshot = onSnapshot; window.serverTimestamp = serverTimestamp;
+
+    // 1. REAL-TIME TOURNAMENTS SYNC (SABHI PHONES PAR MATCHES INSTANT DIKHENGE)
+    try {
+      onSnapshot(collection(db, "tournaments"), (snap) => {
+        const matches = [];
+        snap.forEach(d => matches.push({ id: d.id, ...d.data() }));
+        window.STATE.tournaments = matches;
+        window.saveStorage('tournaments', matches);
+        if (typeof window.renderTournaments === 'function') window.renderTournaments();
+        if (typeof window.renderMyMatches === 'function') window.renderMyMatches();
+        if (typeof window.renderAdminTournaments === 'function') window.renderAdminTournaments();
+      });
+    } catch (e) { console.warn(e); }
+
+    // 2. REAL-TIME SETTINGS & REFERRAL REWARD SYNC
+    try {
+      onSnapshot(doc(db, "settings", "global"), (snap) => {
+        if (snap.exists()) {
+          const d = snap.data();
+          if (d.adminName) window.STATE.adminName = d.adminName;
+          if (d.adminUpi) window.STATE.adminUpi = d.adminUpi;
+          if (d.adminCustomQr !== undefined) window.STATE.adminCustomQr = d.adminCustomQr;
+          if (d.referralReward !== undefined) window.STATE.referralReward = Number(d.referralReward);
+          if (typeof window.applyGlobalSettingsToUI === 'function') window.applyGlobalSettingsToUI();
+        }
+      });
+    } catch (e) { console.warn(e); }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const d = userDoc.data();
+          window.STATE.currentUser = {
+            id: user.uid, email: d.email, username: d.username,
+            role: d.role || "user", ign: d.ign, uid: d.ff_uid,
+            balance: Number(d.balance || 0), deposited: Number(d.deposited || 0), won: Number(d.won || 0)
+          };
+          window.saveStorage('currentUser', window.STATE.currentUser);
+          if (typeof window.openApp === 'function') window.openApp();
+        }
+      }
+    });
+  </script>
+
+  <!-- APP STATE & LOGIC -->
+  <script>
+    function loadStorage(k, def) { try { const v = localStorage.getItem('BHOOYAHX_' + k); return v ? JSON.parse(v) : def; } catch(e) { return def; } }
+    function saveStorage(k, v) { try { localStorage.setItem('BHOOYAHX_' + k, JSON.stringify(v)); } catch(e) {} }
+
+    window.STATE = {
+      adminName: loadStorage('adminName', "Admin Dewansh"),
+      adminUpi: loadStorage('adminUpi', "boohyahx@axl"),
+      adminCustomQr: loadStorage('adminCustomQr', ""),
+      referralReward: loadStorage('referralReward', 10),
+      currentUser: loadStorage('currentUser', null),
+      tournaments: loadStorage('tournaments', []),
+      transactions: loadStorage('transactions', [])
+    };
+
+    function showToast(msg, type="info") {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = `px-4 py-2.5 rounded-xl border border-gray-700 ${type==='error'?'bg-red-600':'bg-gray-900'} text-white text-xs font-semibold shadow-2xl`;
+      t.innerText = msg;
+      c.appendChild(t);
+      setTimeout(() => t.remove(), 3500);
+    }
+
+    // MANUAL SYNC REFRESH (HEADER BUTTON)
+    function manualSyncRefresh() {
+      const icon = document.getElementById('headerRefreshIcon');
+      if (icon) icon.classList.add('animate-spin');
+      renderTournaments();
+      renderMyMatches();
+      renderWallet();
+      applyGlobalSettingsToUI();
+      showToast("App data refreshed & synced with cloud!", "success");
+      setTimeout(() => { if (icon) icon.classList.remove('animate-spin'); }, 700);
+    }
+
+    function switchAuthGateMode(m) {
+      document.getElementById('gateLoginForm').classList.toggle('hidden', m !== 'login');
+      document.getElementById('gateRegisterForm').classList.toggle('hidden', m === 'login');
+      document.getElementById('gateTabLogin').className = m === 'login' ? "flex-1 pb-2 text-center font-display font-bold text-sm text-brand-red border-b-2 border-brand-red" : "flex-1 pb-2 text-center font-display font-bold text-sm text-gray-400";
+      document.getElementById('gateTabRegister').className = m === 'register' ? "flex-1 pb-2 text-center font-display font-bold text-sm text-brand-red border-b-2 border-brand-red" : "flex-1 pb-2 text-center font-display font-bold text-sm text-gray-400";
+    }
+
+    async function handleAuthLogin() {
+      const u = document.getElementById('gateLoginEmail').value.trim();
+      const p = document.getElementById('gateLoginPassword').value;
+      if (!u || !p) return showToast("Enter credentials", "error");
+
+      if (u.toLowerCase() === "dewansh0942c" || u.toLowerCase() === "admin") {
+        if (p !== "Garena0942C" && p !== "admin123") return showToast("Wrong Admin Password", "error");
+        STATE.currentUser = { id: "ADMIN_MASTER", email: "admin@bhooyahx.com", username: "Dewansh", role: "admin", ign: "ADMIN", uid: "0942094201", balance: 0, deposited: 0, won: 0 };
+        saveStorage('currentUser', STATE.currentUser);
+        openApp();
+        return;
+      }
+
+      if (window.auth && window.db) {
+        try {
+          const email = u.includes('@') ? u : `${u.toLowerCase()}@bhooyahx.com`;
+          const cred = await window.signInWithEmailAndPassword(window.auth, email, p);
+          const docSnap = await window.getDoc(window.doc(window.db, "users", cred.user.uid));
+          if (docSnap.exists()) {
+            const d = docSnap.data();
+            STATE.currentUser = { id: cred.user.uid, email: d.email, username: d.username, role: d.role || "user", ign: d.ign, uid: d.ff_uid, balance: Number(d.balance||0), deposited: 0, won: 0 };
+            saveStorage('currentUser', STATE.currentUser);
+            openApp();
+          }
+        } catch(e) { showToast(e.message, "error"); }
+      }
+    }
+
+    async function handleAuthRegister() {
+      const email = document.getElementById('gateRegEmail').value.trim();
+      const username = document.getElementById('gateRegUsername').value.trim();
+      const ign = document.getElementById('gateRegIGN').value.trim();
+      const uid = document.getElementById('gateRegUID').value.trim();
+      const refCode = document.getElementById('gateRegReferralCode').value.trim();
+      const pass = document.getElementById('gateRegPassword').value;
+
+      if (!email || !username || !ign || uid.length < 8 || !pass) {
+        showToast("Fill all details correctly (UID 8-10 digits)", "error");
+        return;
+      }
+
+      if (window.auth && window.db) {
+        try {
+          const emailFormatted = email.includes('@') ? email : `${email.toLowerCase()}@bhooyahx.com`;
+          const cred = await window.createUserWithEmailAndPassword(window.auth, emailFormatted, pass);
+          
+          await window.setDoc(window.doc(window.db, "users", cred.user.uid), {
+            userId: cred.user.uid, email, username, ign, ff_uid: uid,
+            role: "user", balance: 0.00, referredBy: refCode || null,
+            createdAt: window.serverTimestamp()
+          });
+
+          // Check and credit referral reward to referrer
+          if (refCode && window.STATE.referralReward > 0) {
+            const refQuery = window.query(window.collection(window.db, "users"), window.where("ff_uid", "==", refCode));
+            const refSnap = await window.getDocs(refQuery);
+            if (!refSnap.empty) {
+              const referrerDoc = refSnap.docs[0];
+              const curBal = Number(referrerDoc.data().balance || 0);
+              await window.updateDoc(window.doc(window.db, "users", referrerDoc.id), {
+                balance: curBal + window.STATE.referralReward
+              });
+            }
+          }
+
+          STATE.currentUser = { id: cred.user.uid, email, username, ign, uid, role: "user", balance: 0, deposited: 0, won: 0 };
+          saveStorage('currentUser', STATE.currentUser);
+          openApp();
+          showToast("Account created successfully!", "success");
+        } catch(e) { showToast(e.message, "error"); }
+      }
+    }
+
+    function openApp() {
+      document.getElementById('authGateContainer').classList.add('hidden');
+      document.getElementById('authenticatedApp').classList.remove('hidden');
+      renderHeader(); renderProfile(); renderWallet(); switchTab('lobby');
+    }
+
+    function handleFirebaseLogout() {
+      STATE.currentUser = null; saveStorage('currentUser', null);
+      document.getElementById('authGateContainer').classList.remove('hidden');
+      document.getElementById('authenticatedApp').classList.add('hidden');
+    }
+
+    function switchTab(t) {
+      ['viewLobby', 'viewMyMatches', 'viewWallet', 'viewProfile'].forEach(v => document.getElementById(v).classList.add('hidden'));
+      const map = { 'lobby': 'viewLobby', 'myMatches': 'viewMyMatches', 'wallet': 'viewWallet', 'profile': 'viewProfile' };
+      if (document.getElementById(map[t])) document.getElementById(map[t]).classList.remove('hidden');
+      if (t === 'lobby') renderTournaments();
+      if (t === 'myMatches') renderMyMatches();
+      if (t === 'profile') renderProfile();
+    }
+
+    function renderHeader() {
+      if (!STATE.currentUser) return;
+      document.getElementById('headerWalletBal').innerText = `₹${(STATE.currentUser.balance || 0).toFixed(2)}`;
+      document.getElementById('headerProfileLetter').innerText = (STATE.currentUser.username || "P")[0].toUpperCase();
+    }
+
+    function renderWallet() {
+      if (!STATE.currentUser) return;
+      document.getElementById('walletTotalBal').innerText = (STATE.currentUser.balance || 0).toFixed(2);
+    }
+
+    function renderProfile() {
+      if (!STATE.currentUser) return;
+      document.getElementById('profileUsername').innerText = STATE.currentUser.username;
+      document.getElementById('profileUID').innerText = STATE.currentUser.uid;
+      document.getElementById('userReferCodeVal').innerText = STATE.currentUser.uid;
+      document.getElementById('userReferRewardDisplay').innerText = `₹${STATE.referralReward || 10}`;
+
+      if (STATE.currentUser.role === 'admin') {
+        document.getElementById('adminMasterSection').classList.remove('hidden');
+        document.getElementById('adminDisplayNameInput').value = STATE.adminName || "Admin Dewansh";
+        document.getElementById('adminUpiInput').value = STATE.adminUpi || "boohyahx@axl";
+        document.getElementById('adminReferralRewardInput').value = STATE.referralReward || 10;
+        renderAdminTournaments();
+      } else {
+        document.getElementById('adminMasterSection').classList.add('hidden');
+      }
+    }
+
+    // REFERRAL UTILS
+    function copyReferralCode() {
+      const code = STATE.currentUser ? STATE.currentUser.uid : "";
+      navigator.clipboard.writeText(code).then(() => showToast(`Refer Code ${code} copied!`, "success"));
+    }
+
+    function shareReferralWhatsApp() {
+      const code = STATE.currentUser ? STATE.currentUser.uid : "";
+      const text = `Join BhooyahX Free Fire Esports & play daily tournaments! Use my Refer Code: ${code} to get bonus cash! Download App now.`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    async function saveAdminReferralReward() {
+      const rew = parseFloat(document.getElementById('adminReferralRewardInput').value) || 0;
+      STATE.referralReward = rew;
+      saveStorage('referralReward', rew);
+      if (window.db && window.doc && window.setDoc) {
+        await window.setDoc(window.doc(window.db, "settings", "global"), { referralReward: rew }, { merge: true });
+        showToast("Referral Reward Saved to Cloud!", "success");
+      }
+    }
+
+    // TOURNAMENTS (100% CLOUD SYNCED)
+    function renderTournaments() {
+      const c = document.getElementById('tournamentCardsContainer');
+      if (!c) return;
+      if (STATE.tournaments.length === 0) {
+        c.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs">No active tournaments right now.</div>`;
+        return;
+      }
+      c.innerHTML = STATE.tournaments.map(t => `
+        <div class="rounded-2xl p-4 bg-white border border-gray-200 text-gray-900 shadow-sm space-y-2">
+          <div class="flex justify-between text-[11px]">
+            <span class="px-2 py-0.5 rounded font-bold uppercase bg-brand-red/10 text-brand-red">${t.mode}</span>
+            <span class="text-amber-500 font-bold">${t.time}</span>
+          </div>
+          <h3 class="font-bold text-sm">${t.title}</h3>
+          <div class="grid grid-cols-3 gap-2 p-2 bg-gray-50 border rounded-xl text-center text-xs">
+            <div><span class="text-[9px] text-gray-400 block">Win</span><b class="text-amber-600">₹${t.prize}</b></div>
+            <div><span class="text-[9px] text-gray-400 block">Kill</span><b class="text-brand-red">₹${t.perKill}</b></div>
+            <div><span class="text-[9px] text-gray-400 block">Fee</span><b>₹${t.fee}</b></div>
+          </div>
+          <button onclick="joinMatch('${t.id}')" class="w-full py-2 bg-gradient-to-r from-brand-red to-brand-orange text-white rounded-xl text-xs font-bold uppercase shadow">Join Match</button>
+        </div>
+      `).join('');
+    }
+
+    async function saveNewTournament() {
+      const title = document.getElementById('newMatchTitle').value.trim();
+      const mode = document.getElementById('newMatchMode').value;
+      const fee = parseFloat(document.getElementById('newMatchFee').value) || 0;
+      const prize = parseFloat(document.getElementById('newMatchPrize').value) || 0;
+      const perKill = parseFloat(document.getElementById('newMatchPerKill').value) || 0;
+      const time = document.getElementById('newMatchTime').value.trim() || "Today, 09:00 PM";
+      const slots = parseInt(document.getElementById('newMatchSlots').value) || 48;
+      const matchId = "T" + Date.now().toString().slice(-4);
+
+      if (!title) return showToast("Enter match title", "error");
+
+      const matchData = { title, mode, fee, prize, perKill, slots, time, roomId: "LOCKED", roomPass: "LOCKED", roomVisible: false, registeredUsers: [] };
+
+      if (window.db && window.doc && window.setDoc) {
+        await window.setDoc(window.doc(window.db, "tournaments", matchId), matchData);
+        showToast("Match Published Live to all Phones!", "success");
+      }
+      closeModal('createMatchModal');
+    }
+
+    function renderAdminTournaments() {
+      const c = document.getElementById('adminTournamentManageList');
+      if (!c) return;
+      c.innerHTML = STATE.tournaments.map(t => `
+        <div class="p-2.5 bg-gray-50 border rounded-lg flex justify-between items-center text-xs">
+          <div><b>${t.title}</b><div class="text-[10px] text-gray-500">Slots: ${(t.registeredUsers||[]).length}/${t.slots}</div></div>
+          <button onclick="dispatchRoomPrompt('${t.id}')" class="px-2 py-1 bg-brand-orange text-white rounded text-[10px] font-bold">Room Pass</button>
+        </div>
+      `).join('');
+    }
+
+    async function dispatchRoomPrompt(id) {
+      const rid = prompt("Enter Room ID:");
+      const rpass = prompt("Enter Room Password:");
+      if (rid && rpass && window.db) {
+        await window.updateDoc(window.doc(window.db, "tournaments", id), { roomId: rid, roomPass: rpass, roomVisible: true });
+        showToast("Room Credentials sent to players!", "success");
+      }
+    }
+
+    function renderMyMatches() {
+      const c = document.getElementById('myMatchesList');
+      if (!c || !STATE.currentUser) return;
+      const joined = STATE.tournaments.filter(t => (t.registeredUsers || []).includes(STATE.currentUser.id));
+      if (joined.length === 0) {
+        c.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs">No registered matches.</div>`;
+        return;
+      }
+      c.innerHTML = joined.map(t => `
+        <div class="p-4 bg-white border rounded-2xl space-y-2 text-xs">
+          <b>${t.title}</b>
+          <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg">
+            ${t.roomVisible ? `Room ID: <b>${t.roomId}</b> | Pass: <b>${t.roomPass}</b>` : `Room credentials locked until 15 mins before match.`}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // GALLERY QR UPLOAD (CANVAS COMPRESSED BASE64)
+    function handleQrFileUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 500;
+          let w = img.width, h = img.height;
+          if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const base64 = canvas.toDataURL('image/jpeg', 0.85);
+          document.getElementById('adminCustomQrInput').value = base64;
+          showToast("QR Screenshot selected! Ab Save button dabayein.", "info");
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveAdminUpiAndProfileSettings() {
+      const name = document.getElementById('adminDisplayNameInput').value.trim();
+      const upi = document.getElementById('adminUpiInput').value.trim();
+      const qrData = document.getElementById('adminCustomQrInput').value.trim();
+
+      STATE.adminName = name; STATE.adminUpi = upi; STATE.adminCustomQr = qrData;
+      saveStorage('adminName', name); saveStorage('adminUpi', upi); saveStorage('adminCustomQr', qrData);
+
+      if (window.db && window.doc && window.setDoc) {
+        await window.setDoc(window.doc(window.db, "settings", "global"), { adminName: name, adminUpi: upi, adminCustomQr: qrData }, { merge: true });
+        showToast("Settings Synced to all devices!", "success");
+      }
+    }
+
+    function applyGlobalSettingsToUI() {
+      const name = STATE.adminName || "Admin Dewansh";
+      const elAdmin = document.getElementById('adminDisplayNameInput');
+      if (elAdmin) elAdmin.value = name;
+      const elUpi = document.getElementById('adminUpiInput');
+      if (elUpi) elUpi.value = STATE.adminUpi || "boohyahx@axl";
+      const elRew = document.getElementById('userReferRewardDisplay');
+      if (elRew) elRew.innerText = `₹${STATE.referralReward || 10}`;
+    }
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (STATE.currentUser) openApp();
+    });
+  </script>
+</body>
+</html>
