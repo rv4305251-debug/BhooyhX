@@ -60,18 +60,25 @@
     .glow-accent { box-shadow: 0 0 15px -3px rgba(255, 30, 64, 0.4); }
     .glow-orange { box-shadow: 0 0 15px -3px rgba(255, 119, 0, 0.4); }
 
+    /* Fix Phone Status Bar / Notch Overlap */
+    .mobile-header-bar {
+      padding-top: calc(0.75rem + env(safe-area-inset-top, 28px)) !important;
+    }
+    .mobile-gate-pad {
+      padding-top: calc(1.5rem + env(safe-area-inset-top, 28px)) !important;
+    }
     .mobile-bottom-nav {
-      padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 12px)) !important;
     }
     .mobile-main-pad {
-      padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 12px)) !important;
     }
   </style>
 </head>
 <body class="bg-[#F3F4F6] text-gray-900 font-body antialiased transition-colors duration-300 min-h-screen flex flex-col justify-between selection:bg-brand-red selection:text-white w-full max-w-full overflow-x-hidden" id="appBody">
 
   <!-- ================= AUTH GATE SCREEN (ORIGINAL RESTORED) ================= -->
-  <div id="authGateContainer" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-[#E5E7EB] via-[#F3F4F6] to-white w-full max-w-full overflow-x-hidden">
+  <div id="authGateContainer" class="mobile-gate-pad min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-[#E5E7EB] via-[#F3F4F6] to-white w-full max-w-full overflow-x-hidden">
     <div class="bg-white border border-gray-200 rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-xl relative text-gray-900" id="authGateCard">
       
       <div class="flex flex-col items-center text-center space-y-2">
@@ -164,7 +171,7 @@
   <div id="authenticatedApp" class="hidden flex flex-col min-h-screen justify-between w-full max-w-full overflow-x-hidden">
 
     <!-- TOP HEADER BAR -->
-    <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-gray-200 transition-colors duration-300 px-3 py-2.5 w-full" id="headerNav">
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-gray-200 transition-colors duration-300 px-3 py-2.5 w-full" id="headerNav" class="mobile-header-bar sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-gray-200 transition-colors duration-300 px-3 pb-2.5 pt-7 w-full">
       <div class="max-w-md w-full mx-auto flex items-center justify-between">
         <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('lobby')">
           <div id="appLogoContainer" class="w-9 h-9 flex-shrink-0">
