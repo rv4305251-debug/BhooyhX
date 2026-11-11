@@ -560,9 +560,9 @@
               <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
                 <i class="ph-bold ph-qr-code text-base"></i> Admin Name, UPI ID & QR Code Settings
               </h3>
-              <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">Live Payments</span>
+              <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">Cloud Live Sync</span>
             </div>
-            <p class="text-[11px] text-gray-600">Yahan jo Admin Name aur UPI ID aap dalenge, wahi sabhi users ko profile aur Add Money QR me dikhega.</p>
+            <p class="text-[11px] text-gray-600">Yahan jo Admin Name, UPI ID aur QR Code aap set karenge, wo <b>Firebase Cloud ke zariye sabhi devices par bina app update kiye instant live</b> dikhega.</p>
             <div class="space-y-2.5 text-xs">
               <div>
                 <label class="block text-gray-700 font-semibold mb-0.5">Admin Display Name (Users ko dikhne wala naam):</label>
@@ -572,17 +572,33 @@
                 <label class="block text-gray-700 font-semibold mb-0.5">Admin Receiving UPI ID (Payment aane ke liye):</label>
                 <input type="text" id="adminUpiInput" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 font-mono font-bold focus:border-emerald-500 outline-none" placeholder="username@upi">
               </div>
-              <div>
-                <label class="block text-gray-700 font-semibold mb-0.5">Custom Scanner / QR Code Image Link (Optional):</label>
-                <input type="text" id="adminCustomQrInput" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-2 text-gray-900 text-xs focus:border-emerald-500 outline-none" placeholder="https://example.com/my-qr.png (Khali chodne par dynamic QR banega)">
+              
+              <!-- DIRECT QR IMAGE UPLOAD FROM PHONE GALLERY -->
+              <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+                <label class="block text-emerald-900 font-bold mb-0.5 flex items-center gap-1.5">
+                  <i class="ph-bold ph-upload-simple text-base text-emerald-600"></i> Upload QR Code Scanner Image:
+                </label>
+                <input type="file" id="adminQrFileInput" accept="image/*" onchange="handleQrFileUpload(event)" class="w-full text-xs text-gray-700 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer bg-white p-1 rounded-lg border border-emerald-200">
+                <p class="text-[9.5px] text-gray-500">Apne phone ki gallery se Google Pay / PhonePe / Paytm ka QR code screenshot direct choose karein.</p>
+                
+                <div id="adminQrPreviewBox" class="flex items-center gap-3 bg-white p-2 rounded-lg border border-gray-200">
+                  <div class="w-16 h-16 rounded border border-gray-300 overflow-hidden bg-gray-50 flex items-center justify-center flex-shrink-0">
+                    <img id="adminQrPreviewImg" src="" alt="QR Preview" class="w-full h-full object-contain">
+                  </div>
+                  <div class="flex-1">
+                    <span class="text-[10px] font-bold text-gray-800 block">Current Active Scanner</span>
+                    <span class="text-[9px] text-gray-400 block" id="adminQrStatusText">No custom image set (Using dynamic QR)</span>
+                    <button type="button" onclick="clearCustomQrImage()" class="mt-1 text-[10px] text-red-600 hover:underline font-bold">Remove Image</button>
+                  </div>
+                </div>
+                <input type="hidden" id="adminCustomQrInput" value="">
               </div>
-              <button onclick="saveAdminUpiAndProfileSettings()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition text-xs flex items-center justify-center gap-1.5 shadow">
-                <i class="ph-bold ph-floppy-disk"></i> Save Admin Details & Update QR
+
+              <button onclick="saveAdminUpiAndProfileSettings()" id="btnSaveAdminDetails" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition text-xs flex items-center justify-center gap-1.5 shadow">
+                <i class="ph-bold ph-cloud-arrow-up text-base"></i> Save Details & Cloud Sync to All Devices
               </button>
             </div>
           </div>
-
-        </div>
 
         <!-- LOGOUT BUTTON -->
         <button onclick="handleFirebaseLogout()" class="w-full py-2.5 rounded-xl border border-red-300 bg-red-50 hover:bg-red-100 text-brand-red text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition">
@@ -1061,6 +1077,37 @@
         }
       }
     });
+
+    
+    // Real-time Global Settings Listener (Admin UPI, Name & QR Image Sync Across ALL Devices)
+    try {
+      const settingsDocRef = doc(db, "settings", "global");
+      onSnapshot(settingsDocRef, (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.adminName) {
+            window.STATE.adminName = data.adminName;
+            window.saveStorage('adminName', data.adminName);
+          }
+          if (data.adminUpi) {
+            window.STATE.adminUpi = data.adminUpi;
+            window.saveStorage('adminUpi', data.adminUpi);
+          }
+          if (data.adminCustomQr !== undefined) {
+            window.STATE.adminCustomQr = data.adminCustomQr;
+            window.saveStorage('adminCustomQr', data.adminCustomQr);
+          }
+          // Update live UI on this device
+          if (typeof window.applyGlobalSettingsToUI === 'function') {
+            window.applyGlobalSettingsToUI();
+          }
+        }
+      }, (err) => {
+        console.warn("Global settings sync error:", err);
+      });
+    } catch (e) {
+      console.warn("Settings listener init error:", e);
+    }
 
     console.log("Firebase initialized successfully for BhooyahX!");
   </script>
@@ -1731,10 +1778,111 @@
       }
     }
 
-    function saveAdminUpiAndProfileSettings() {
+    
+    // REAL-TIME GLOBAL SETTINGS UI UPDATER (CROSS-DEVICE SYNC)
+    window.applyGlobalSettingsToUI = function() {
+      const name = window.STATE.adminName || "Admin Dewansh";
+      const upi = window.STATE.adminUpi || "boohyahx@axl";
+      const qr = window.STATE.adminCustomQr || "";
+
+      // Profile support name
+      const elAdminName = document.getElementById('displayAdminName');
+      if (elAdminName) elAdminName.innerText = name;
+
+      // Add money modal
+      const elBadge = document.getElementById('qrPayeeNameBadge');
+      if (elBadge) elBadge.innerText = name;
+      const elUpiText = document.getElementById('qrUpiTextDisplay');
+      if (elUpiText) elUpiText.innerText = upi;
+
+      // Admin inputs (if admin view is active)
+      const elNameInp = document.getElementById('adminDisplayNameInput');
+      if (elNameInp && document.activeElement !== elNameInp) elNameInp.value = name;
+      const elUpiInp = document.getElementById('adminUpiInput');
+      if (elUpiInp && document.activeElement !== elUpiInp) elUpiInp.value = upi;
+      const elQrInp = document.getElementById('adminCustomQrInput');
+      if (elQrInp) elQrInp.value = qr;
+
+      const previewImg = document.getElementById('adminQrPreviewImg');
+      const statusText = document.getElementById('adminQrStatusText');
+      if (previewImg && statusText) {
+        if (qr && qr.length > 10) {
+          previewImg.src = qr;
+          statusText.innerText = "Custom QR Image Active (Live on all devices)";
+          statusText.className = "text-[9px] text-emerald-600 font-bold block";
+        } else {
+          previewImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=${encodeURIComponent(upi)}`;
+          statusText.innerText = "Dynamic QR active";
+          statusText.className = "text-[9px] text-gray-400 block";
+        }
+      }
+
+      // Refresh QR generator if Add Money modal is open
+      if (typeof generateDynamicUPIQR === 'function') {
+        generateDynamicUPIQR();
+      }
+    };
+
+    // HANDLE DIRECT QR IMAGE UPLOAD FROM PHONE GALLERY
+    function handleQrFileUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showToast("Kripya photo/image file hi select karein", "error");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          // Compress & resize image to ensure fast loading on all devices
+          const canvas = document.createElement('canvas');
+          const maxDim = 500;
+          let w = img.width, h = img.height;
+          if (w > h && w > maxDim) {
+            h = Math.round(h * maxDim / w);
+            w = maxDim;
+          } else if (h > maxDim) {
+            w = Math.round(w * maxDim / h);
+            h = maxDim;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+
+          document.getElementById('adminCustomQrInput').value = compressedBase64;
+          const previewImg = document.getElementById('adminQrPreviewImg');
+          if (previewImg) previewImg.src = compressedBase64;
+          const statusText = document.getElementById('adminQrStatusText');
+          if (statusText) {
+            statusText.innerText = "Photo selected! Save button dabayein.";
+            statusText.className = "text-[9px] text-amber-600 font-bold block";
+          }
+          showToast("QR Image select ho gayi! Niche 'Save Details' dabayein.", "info");
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearCustomQrImage() {
+      document.getElementById('adminCustomQrInput').value = "";
+      const fileInp = document.getElementById('adminQrFileInput');
+      if (fileInp) fileInp.value = "";
+      window.STATE.adminCustomQr = "";
+      window.saveStorage('adminCustomQr', "");
+      if (window.applyGlobalSettingsToUI) window.applyGlobalSettingsToUI();
+      showToast("Custom image removed. Ab Save button dabayein.", "info");
+    }
+
+    async function saveAdminUpiAndProfileSettings() {
       const name = document.getElementById('adminDisplayNameInput').value.trim();
       const upi = document.getElementById('adminUpiInput').value.trim();
-      const qrUrl = document.getElementById('adminCustomQrInput').value.trim();
+      const qrData = document.getElementById('adminCustomQrInput').value.trim();
 
       if (!name) {
         showToast("Kripya Admin Name dalein", "error");
@@ -1745,24 +1893,46 @@
         return;
       }
 
-      STATE.adminName = name;
-      STATE.adminUpi = upi;
-      STATE.adminCustomQr = qrUrl;
+      const saveBtn = document.getElementById('btnSaveAdminDetails');
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerText = "Syncing with Cloud Database...";
+      }
 
-      saveStorage('adminName', name);
-      saveStorage('adminUpi', upi);
-      saveStorage('adminCustomQr', qrUrl);
+      // 1. Local update
+      window.STATE.adminName = name;
+      window.STATE.adminUpi = upi;
+      window.STATE.adminCustomQr = qrData;
+      window.saveStorage('adminName', name);
+      window.saveStorage('adminUpi', upi);
+      window.saveStorage('adminCustomQr', qrData);
 
-      // Update in UI for all users
-      const elAdminName = document.getElementById('displayAdminName');
-      if (elAdminName) elAdminName.innerText = name;
-      const elBadge = document.getElementById('qrPayeeNameBadge');
-      if (elBadge) elBadge.innerText = name;
-      const elUpiText = document.getElementById('qrUpiTextDisplay');
-      if (elUpiText) elUpiText.innerText = upi;
+      // 2. Firebase Cloud Firestore Sync (For ALL phones)
+      if (window.db && window.doc && window.setDoc) {
+        try {
+          await window.setDoc(window.doc(window.db, "settings", "global"), {
+            adminName: name,
+            adminUpi: upi,
+            adminCustomQr: qrData,
+            updatedAt: window.serverTimestamp ? window.serverTimestamp() : new Date()
+          }, { merge: true });
+          showToast("Cloud Synced! Ab sabhi devices par yahi QR aur UPI dikhega.", "success");
+        } catch (err) {
+          console.warn("Firestore settings save error:", err);
+          showToast("Firebase Cloud save error: " + err.message, "error");
+        }
+      } else {
+        showToast("Local memory me save ho gaya!", "info");
+      }
 
-      showToast("Admin Name, UPI ID aur QR Code successfully update ho gaye!", "success");
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="ph-bold ph-cloud-arrow-up text-base"></i> Save Details & Cloud Sync to All Devices';
+      }
+
+      if (window.applyGlobalSettingsToUI) window.applyGlobalSettingsToUI();
     }
+
 
     function setDepositPreset(amt) {
       document.getElementById('depositAmountInput').value = amt;
