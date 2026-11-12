@@ -77,6 +77,14 @@
 </head>
 <body class="bg-[#F3F4F6] text-gray-900 font-body antialiased transition-colors duration-300 min-h-screen flex flex-col justify-between selection:bg-brand-red selection:text-white w-full max-w-full overflow-x-hidden" id="appBody">
 
+  <!-- PULL TO REFRESH INDICATOR -->
+  <div id="ptrIndicator" class="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none transition-transform duration-200 -translate-y-full">
+    <div class="mt-3 px-4 py-1.5 rounded-full bg-gray-900/95 text-white text-xs font-bold shadow-lg border border-gray-700 flex items-center gap-2 backdrop-blur-md">
+      <i class="ph-bold ph-arrows-clockwise text-brand-orange text-sm" id="ptrSpinnerIcon"></i>
+      <span id="ptrText">Pull down to refresh...</span>
+    </div>
+  </div>
+
   <!-- ================= AUTH GATE SCREEN (ORIGINAL RESTORED) ================= -->
   <div id="authGateContainer" class="mobile-gate-pad min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-[#E5E7EB] via-[#F3F4F6] to-white w-full max-w-full overflow-x-hidden">
     <div class="bg-white border border-gray-200 rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-xl relative text-gray-900" id="authGateCard">
@@ -156,6 +164,13 @@
           </p>
         </div>
         <div>
+          <label class="block text-gray-700 font-semibold mb-0.5 flex justify-between items-center">
+            <span>Referral Code (Optional):</span>
+            <span class="text-[10px] text-emerald-600 font-bold" id="regReferralBonusLabel">Invite Bonus</span>
+          </label>
+          <input type="text" id="gateRegReferralCode" placeholder="Enter friend's FF UID (e.g. 1029384756)" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 font-mono outline-none focus:border-brand-red transition">
+        </div>
+        <div>
           <label class="block text-gray-700 font-semibold mb-0.5">Password (Min 6 chars):</label>
           <input type="password" id="gateRegPassword" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2 text-gray-900 outline-none focus:border-brand-red transition">
         </div>
@@ -199,8 +214,11 @@
           </div>
         </div>
 
-        <!-- Right Header Actions (Wallet Pill + Profile Avatar) -->
+        <!-- Right Header Actions (Refresh + Wallet Pill + Profile Avatar) -->
         <div class="flex items-center gap-2">
+          <button onclick="manualSyncRefresh()" id="headerRefreshBtn" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-300 flex items-center justify-center text-gray-700 hover:text-brand-red active:scale-90 transition shadow-sm" title="Refresh Live Data">
+            <i class="ph-bold ph-arrows-clockwise text-base" id="headerRefreshIcon"></i>
+          </button>
           <button onclick="switchTab('wallet')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-600 hover:bg-amber-500/20 transition-all text-xs font-semibold">
             <i class="ph-bold ph-coins text-amber-500 text-sm"></i>
             <span id="headerWalletBal">₹0.00</span>
@@ -361,6 +379,37 @@
           </div>
         </div>
 
+                <!-- REFER & EARN CARD (USER VIEW) -->
+        <div class="rounded-2xl p-4 bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 text-white shadow-md relative overflow-hidden" id="userReferralCard">
+          <div class="relative z-10 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-wider bg-black/25 px-2.5 py-0.5 rounded-full">Refer & Earn Real Cash</span>
+              <span class="text-xs font-bold text-yellow-200 flex items-center gap-1 font-display">
+                <i class="ph-bold ph-coins"></i> <span id="userReferRewardDisplay">₹10</span> per Refer
+              </span>
+            </div>
+            <div>
+              <h4 class="font-gaming text-2xl font-bold uppercase tracking-wider leading-tight">Apne Squad Ko Invite Karein</h4>
+              <p class="text-[11px] text-white/90">Har player jo aapke UID code se judega, aapko turant real cash reward milega.</p>
+            </div>
+            <div class="flex items-center gap-2 pt-1">
+              <div class="flex-1 bg-black/30 backdrop-blur-md border border-white/20 rounded-xl px-3 py-2 flex items-center justify-between">
+                <div>
+                  <span class="text-[9px] text-white/70 block uppercase">Aapka Refer Code:</span>
+                  <span id="userReferCodeVal" class="font-mono font-bold text-sm tracking-wider select-all text-yellow-300">UID</span>
+                </div>
+                <button onclick="copyReferralCode()" class="px-2.5 py-1 bg-white text-gray-900 rounded-lg text-[10px] font-bold shadow hover:bg-gray-100 flex items-center gap-1">
+                  <i class="ph-bold ph-copy"></i> Copy
+                </button>
+              </div>
+              <button onclick="shareReferralWhatsApp()" class="py-2.5 px-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition active:scale-95">
+                <i class="ph-bold ph-whatsapp-logo text-lg"></i> Share
+              </button>
+            </div>
+          </div>
+          <div class="absolute -right-4 -bottom-6 opacity-20 text-8xl text-black font-gaming select-none pointer-events-none">FF</div>
+        </div>
+
         <!-- THEME CHANGE BUTTON -->
         <div class="rounded-xl border border-gray-200 bg-white p-3.5 shadow-sm flex items-center justify-between" id="profileThemeBox">
           <div class="flex items-center gap-2.5">
@@ -401,6 +450,26 @@
 
         <!-- 2. MASTER ADMIN STUDIO -->
         <div id="adminMasterSection" class="hidden space-y-4">
+
+                    <!-- REFERRAL REWARD CONTROLLER (ADMIN) -->
+          <div class="rounded-xl border border-amber-300 bg-amber-50/50 p-4 space-y-3 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+                <i class="ph-bold ph-gift text-base text-brand-orange"></i> Refer & Earn Reward Settings
+              </h3>
+              <span class="text-[9px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-bold">Cloud Live</span>
+            </div>
+            <p class="text-[11px] text-gray-600">Admin yahan se set karega ki ek player ko invite karne par refer karne wale ko kitne rupaye (₹) milenge.</p>
+            <div class="flex items-center gap-2">
+              <div class="relative flex-1">
+                <span class="absolute left-3 top-2 text-gray-500 font-bold text-xs">₹</span>
+                <input type="number" id="adminReferralRewardInput" value="10" min="0" placeholder="10" class="w-full bg-white border border-gray-300 rounded-lg py-2 pl-7 pr-3 text-gray-900 font-bold text-xs outline-none focus:border-amber-500">
+              </div>
+              <button onclick="saveAdminReferralReward()" id="btnSaveReferralReward" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-xs shadow transition">
+                Save Reward
+              </button>
+            </div>
+          </div>
 
           <!-- A. EDIT APP NAME DYNAMICALLY -->
           <div class="rounded-xl border border-blue-200 bg-blue-50/50 p-4 space-y-3 shadow-sm">
@@ -599,6 +668,8 @@
               </button>
             </div>
           </div>
+
+        </div>
 
         <!-- LOGOUT BUTTON -->
         <button onclick="handleFirebaseLogout()" class="w-full py-2.5 rounded-xl border border-red-300 bg-red-50 hover:bg-red-100 text-brand-red text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition">
@@ -1006,12 +1077,14 @@
       getDoc, 
       setDoc, 
       updateDoc,
+      deleteDoc,
       collection, 
       query, 
       where, 
       getDocs, 
       onSnapshot,
-      serverTimestamp 
+      serverTimestamp,
+      arrayUnion
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     // Your official BhooyahX Firebase Config
@@ -1041,12 +1114,16 @@
     window.getDoc = getDoc;
     window.setDoc = setDoc;
     window.updateDoc = updateDoc;
+    window.deleteDoc = deleteDoc;
     window.collection = collection;
     window.query = query;
     window.where = where;
     window.getDocs = getDocs;
     window.onSnapshot = onSnapshot;
     window.serverTimestamp = serverTimestamp;
+    window.arrayUnion = arrayUnion;
+
+    let userDocUnsub = null;
 
     // Real-Time Permanent User Session Observer
     onAuthStateChanged(auth, async (user) => {
@@ -1071,15 +1148,53 @@
             if (typeof window.openApp === 'function') {
               window.openApp();
             }
+
+            // Real-Time Wallet Balance Listener for Logged-In User
+            if (userDocUnsub) userDocUnsub();
+            userDocUnsub = onSnapshot(userDocRef, (snap) => {
+              if (snap.exists() && window.STATE.currentUser) {
+                const ud = snap.data();
+                window.STATE.currentUser.balance = Number(ud.balance || 0);
+                window.STATE.currentUser.deposited = Number(ud.deposited || 0);
+                window.STATE.currentUser.won = Number(ud.won || 0);
+                window.saveStorage('currentUser', window.STATE.currentUser);
+                if (typeof window.renderHeader === 'function') window.renderHeader();
+                if (typeof window.renderWallet === 'function') window.renderWallet();
+              }
+            });
           }
         } catch (err) {
           console.warn("Session restore error:", err);
         }
+      } else {
+        if (userDocUnsub) { userDocUnsub(); userDocUnsub = null; }
       }
     });
 
-    
-    // Real-time Global Settings Listener (Admin UPI, Name & QR Image Sync Across ALL Devices)
+    // 1. REAL-TIME TOURNAMENTS LISTENER (EVERY DEVICE SEES ADMIN MATCHES INSTANTLY)
+    try {
+      const tournColl = collection(db, "tournaments");
+      onSnapshot(tournColl, (snap) => {
+        const matches = [];
+        snap.forEach(docSnap => {
+          matches.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        // Sort newest first if createdAt exists
+        matches.sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
+        window.STATE.tournaments = matches;
+        window.saveStorage('tournaments', matches);
+        if (typeof window.renderTournaments === 'function') window.renderTournaments();
+        if (typeof window.renderMyMatches === 'function') window.renderMyMatches();
+        if (typeof window.renderAdminTournaments === 'function') window.renderAdminTournaments();
+        if (typeof window.updateAdminFinancials === 'function') window.updateAdminFinancials();
+      }, (err) => {
+        console.warn("Tournaments sync error:", err);
+      });
+    } catch (e) {
+      console.warn("Tournaments listener init error:", e);
+    }
+
+    // 2. REAL-TIME GLOBAL SETTINGS LISTENER (ADMIN UPI, QR, APP NAME, INSTRUCTIONS, REFERRAL REWARD, AUTO SWITCHES)
     try {
       const settingsDocRef = doc(db, "settings", "global");
       onSnapshot(settingsDocRef, (snap) => {
@@ -1097,7 +1212,26 @@
             window.STATE.adminCustomQr = data.adminCustomQr;
             window.saveStorage('adminCustomQr', data.adminCustomQr);
           }
-          // Update live UI on this device
+          if (data.appName) {
+            window.STATE.appName = data.appName;
+            window.saveStorage('appName', data.appName);
+          }
+          if (data.roomInstructions) {
+            window.STATE.roomInstructions = data.roomInstructions;
+            window.saveStorage('roomInstructions', data.roomInstructions);
+          }
+          if (data.supportLinks) {
+            window.STATE.supportLinks = data.supportLinks;
+            window.saveStorage('supportLinks', data.supportLinks);
+          }
+          if (data.autoSettings) {
+            window.STATE.autoSettings = data.autoSettings;
+            window.saveStorage('autoSettings', data.autoSettings);
+          }
+          if (data.referralReward !== undefined) {
+            window.STATE.referralReward = Number(data.referralReward);
+            window.saveStorage('referralReward', window.STATE.referralReward);
+          }
           if (typeof window.applyGlobalSettingsToUI === 'function') {
             window.applyGlobalSettingsToUI();
           }
@@ -1109,7 +1243,49 @@
       console.warn("Settings listener init error:", e);
     }
 
-    console.log("Firebase initialized successfully for BhooyahX!");
+    // 3. REAL-TIME DEPOSITS QUEUE LISTENER (ADMIN SEES USER DEPOSITS LIVE)
+    try {
+      const depColl = collection(db, "deposits");
+      onSnapshot(depColl, (snap) => {
+        const deps = [];
+        snap.forEach(docSnap => {
+          const d = { id: docSnap.id, ...docSnap.data() };
+          if (d.status === "pending") deps.push(d);
+        });
+        window.STATE.pendingDeposits = deps;
+        window.saveStorage('pendingDeposits', deps);
+        if (typeof window.renderAdminPendingDeposits === 'function') {
+          window.renderAdminPendingDeposits();
+        }
+      }, (err) => {
+        console.warn("Deposits listener error:", err);
+      });
+    } catch (e) {
+      console.warn("Deposits init error:", e);
+    }
+
+    // 4. REAL-TIME WITHDRAWALS QUEUE LISTENER (ADMIN SEES USER WITHDRAWALS LIVE)
+    try {
+      const wdColl = collection(db, "withdrawals");
+      onSnapshot(wdColl, (snap) => {
+        const wds = [];
+        snap.forEach(docSnap => {
+          const w = { id: docSnap.id, ...docSnap.data() };
+          if (w.status === "pending") wds.push(w);
+        });
+        window.STATE.pendingWithdrawals = wds;
+        window.saveStorage('pendingWithdrawals', wds);
+        if (typeof window.renderAdminPendingWithdrawals === 'function') {
+          window.renderAdminPendingWithdrawals();
+        }
+      }, (err) => {
+        console.warn("Withdrawals listener error:", err);
+      });
+    } catch (e) {
+      console.warn("Withdrawals init error:", e);
+    }
+
+    console.log("Firebase 100% Real-Time Cloud Sync Active for BhooyahX!");
   </script>
 
   <!-- ================= LOGIC & REAL APP STATE ================= -->
@@ -1140,6 +1316,7 @@
       adminName: loadStorage('adminName', "Admin Dewansh"),
       adminUpi: loadStorage('adminUpi', "boohyahx@axl"),
       adminCustomQr: loadStorage('adminCustomQr', ""),
+      referralReward: loadStorage('referralReward', 10),
       theme: loadStorage('theme', "day"),
       supportLinks: loadStorage('supportLinks', { telegram: 'https://t.me/bhooyahx', whatsapp: 'https://wa.me/910000000000' }),
       roomInstructions: loadStorage('roomInstructions', `• Join the custom room 10-15 minutes before the match start time.\n• Emulator players are strictly NOT allowed.\n• Teaming up, hacking, or using bugs will lead to immediate permanent ban.\n• Do not change your slot position once seated in the room.`),
@@ -1162,6 +1339,73 @@
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3500);
     }
+
+    
+    // MANUAL INSTANT SYNC REFRESH + SWIPE-TO-REFRESH (PULL DOWN)
+    function manualSyncRefresh() {
+      const icon = document.getElementById('headerRefreshIcon');
+      if (icon) icon.classList.add('animate-spin');
+      if (typeof renderHeader === 'function') renderHeader();
+      if (typeof renderTournaments === 'function') renderTournaments();
+      if (typeof renderMyMatches === 'function') renderMyMatches();
+      if (typeof renderWallet === 'function') renderWallet();
+      if (typeof renderProfile === 'function') renderProfile();
+      if (typeof applyGlobalSettingsToUI === 'function') applyGlobalSettingsToUI();
+      showToast("App data refreshed & synced with cloud!", "success");
+      setTimeout(() => {
+        if (icon) icon.classList.remove('animate-spin');
+      }, 700);
+    }
+
+    // Touch Pull-to-Refresh Implementation
+    (function initPullToRefresh() {
+      let touchStartY = 0;
+      let isPulling = false;
+      const ptrEl = document.getElementById('ptrIndicator');
+      const ptrText = document.getElementById('ptrText');
+      const ptrIcon = document.getElementById('ptrSpinnerIcon');
+
+      window.addEventListener('touchstart', (e) => {
+        if (window.scrollY <= 2) {
+          touchStartY = e.touches[0].clientY;
+          isPulling = true;
+        } else {
+          isPulling = false;
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!isPulling) return;
+        const currentY = e.touches[0].clientY;
+        const diff = currentY - touchStartY;
+        if (diff > 25 && window.scrollY <= 2) {
+          if (ptrEl) {
+            ptrEl.style.transform = `translateY(${Math.min(diff * 0.45, 65)}px)`;
+          }
+          if (diff > 110) {
+            if (ptrText) ptrText.innerText = "Release to refresh...";
+            if (ptrIcon) ptrIcon.classList.add('rotate-180');
+          } else {
+            if (ptrText) ptrText.innerText = "Pull down to refresh...";
+            if (ptrIcon) ptrIcon.classList.remove('rotate-180');
+          }
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchend', (e) => {
+        if (!isPulling) return;
+        const endY = e.changedTouches[0].clientY;
+        const diff = endY - touchStartY;
+        isPulling = false;
+        if (ptrEl) {
+          ptrEl.style.transform = 'translateY(-100%)';
+        }
+        if (ptrIcon) ptrIcon.classList.remove('rotate-180');
+        if (diff > 110 && window.scrollY <= 2) {
+          manualSyncRefresh();
+        }
+      }, { passive: true });
+    })();
 
     function showGateError(msg) {
       const alertBox = document.getElementById('gateAlert');
@@ -1271,10 +1515,16 @@
       const username = document.getElementById('gateRegUsername').value.trim();
       const ign = document.getElementById('gateRegIGN').value.trim();
       const uid = document.getElementById('gateRegUID').value.trim();
+      const refCodeInput = document.getElementById('gateRegReferralCode') ? document.getElementById('gateRegReferralCode').value.trim() : "";
       const pass = document.getElementById('gateRegPassword').value;
 
       if (!email || !username || !ign || uid.length < 8 || !pass) {
         showGateError("Kripya saari details sahi bharein (UID kam se kam 8-10 digits).");
+        return;
+      }
+
+      if (refCodeInput && refCodeInput === uid) {
+        showGateError("Aap apna khud ka Referral Code nahi daal sakte.");
         return;
       }
 
@@ -1299,26 +1549,17 @@
         }
       }
 
-      // 2. Database Duplicate Check (Local/Offline & App Engine)
+      // 2. Database Duplicate Check
       const allUsers = loadStorage('allRegisteredUsersList', []);
-
-      // Check duplicate UID
-      const duplicateUID = allUsers.find(u => u.uid === uid);
-      if (duplicateUID) {
+      if (allUsers.find(u => u.uid === uid)) {
         showGateError("Yeh Free Fire UID pehle se registered hai! Ek UID se ek hi account banega.");
         return;
       }
-
-      // Check duplicate Email or Mobile No.
-      const duplicateEmailOrMobile = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (duplicateEmailOrMobile) {
+      if (allUsers.find(u => u.email.toLowerCase() === email.toLowerCase())) {
         showGateError("Yeh Email / Mobile Number pehle se registered hai! Kripya Sign In karein.");
         return;
       }
-
-      // Check duplicate Username
-      const duplicateUsername = allUsers.find(u => u.username.toLowerCase() === username.toLowerCase());
-      if (duplicateUsername) {
+      if (allUsers.find(u => u.username.toLowerCase() === username.toLowerCase())) {
         showGateError("Yeh Username pehle se kisi aur ne liya hua hai! Naya username chunein.");
         return;
       }
@@ -1333,16 +1574,15 @@
         uid: uid,
         password: pass,
         role: isAdmin ? "admin" : "user",
-        balance: 0.00, // STRICTLY ZERO
+        balance: 0.00,
         deposited: 0.00,
         won: 0.00
       };
 
-      // Save to real users database
       allUsers.push(newUser);
       saveStorage('allRegisteredUsersList', allUsers);
 
-      // Save to Firebase Cloud if initialized
+      // Save to Firebase Cloud & Process Referral Reward
       if (window.auth && window.db) {
         try {
           const emailToRegister = email.includes('@') ? email : `${email.toLowerCase()}@bhooyahx.com`;
@@ -1358,8 +1598,23 @@
             balance: 0.00,
             deposited: 0.00,
             won: 0.00,
+            referredBy: refCodeInput || null,
             createdAt: window.serverTimestamp ? window.serverTimestamp() : new Date()
           });
+
+          // Credit Referral Reward to Referrer in Firestore
+          const rewardAmt = Number(window.STATE.referralReward || 0);
+          if (refCodeInput && rewardAmt > 0) {
+            const refQuery = window.query(window.collection(window.db, "users"), window.where("ff_uid", "==", refCodeInput));
+            const refSnap = await window.getDocs(refQuery);
+            if (!refSnap.empty) {
+              const referrerDoc = refSnap.docs[0];
+              const currentBal = Number(referrerDoc.data().balance || 0);
+              await window.updateDoc(window.doc(window.db, "users", referrerDoc.id), {
+                balance: currentBal + rewardAmt
+              });
+            }
+          }
         } catch (err) {
           console.warn("Firebase user create:", err);
         }
@@ -1586,6 +1841,12 @@
       document.getElementById('profileIGN').innerText = STATE.currentUser.ign;
       document.getElementById('profileUID').innerText = STATE.currentUser.uid;
       
+      // Populate User Referral Card
+      const elRefCode = document.getElementById('userReferCodeVal');
+      if (elRefCode) elRefCode.innerText = STATE.currentUser.uid || STATE.currentUser.username;
+      const elRefRew = document.getElementById('userReferRewardDisplay');
+      if (elRefRew) elRefRew.innerText = `₹${STATE.referralReward || 10}`;
+
       // Update Head Admin Name for all users
       const elAdminName = document.getElementById('displayAdminName');
       if (elAdminName) elAdminName.innerText = STATE.adminName || "Admin Dewansh";
@@ -1603,6 +1864,9 @@
         document.getElementById('adminWhatsappInput').value = STATE.supportLinks.whatsapp;
         document.getElementById('adminInstructionsInput').value = STATE.roomInstructions;
         document.getElementById('adminAppNameInput').value = STATE.appName;
+
+        const elRefInp = document.getElementById('adminReferralRewardInput');
+        if (elRefInp) elRefInp.value = STATE.referralReward !== undefined ? STATE.referralReward : 10;
 
         // Admin Name, UPI & QR fields
         const elNameInp = document.getElementById('adminDisplayNameInput');
@@ -1624,6 +1888,50 @@
         document.getElementById('regularPlayerSection').classList.remove('hidden');
         document.getElementById('adminMasterSection').classList.add('hidden');
       }
+    }
+
+    // REFERRAL SHARE & COPY FUNCTIONS
+    function copyReferralCode() {
+      const code = STATE.currentUser ? (STATE.currentUser.uid || STATE.currentUser.username) : "";
+      if (!code) return;
+      navigator.clipboard.writeText(code).then(() => {
+        showToast("Refer Code copied: " + code, "success");
+      }).catch(() => {
+        showToast("Refer Code: " + code, "info");
+      });
+    }
+
+    function shareReferralWhatsApp() {
+      const code = STATE.currentUser ? (STATE.currentUser.uid || STATE.currentUser.username) : "";
+      const appTitle = STATE.appName || "BhooyahX";
+      const rew = STATE.referralReward || 10;
+      const text = `🔥 Join ${appTitle} Free Fire Esports Tournaments & win daily real cash!
+
+Use my Refer Code: *${code}* during signup!
+
+Download App now & join the battle!`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    async function saveAdminReferralReward() {
+      const rew = parseFloat(document.getElementById('adminReferralRewardInput').value) || 0;
+      window.STATE.referralReward = rew;
+      window.saveStorage('referralReward', rew);
+
+      if (window.db && window.doc && window.setDoc) {
+        try {
+          await window.setDoc(window.doc(window.db, "settings", "global"), {
+            referralReward: rew,
+            updatedAt: window.serverTimestamp ? window.serverTimestamp() : new Date()
+          }, { merge: true });
+          showToast(`Referral reward set to ₹${rew} across all devices!`, "success");
+        } catch (e) {
+          showToast("Error saving reward: " + e.message, "error");
+        }
+      } else {
+        showToast("Referral reward saved!", "success");
+      }
+      if (typeof window.applyGlobalSettingsToUI === 'function') window.applyGlobalSettingsToUI();
     }
 
     let activeFilter = 'all';
@@ -1751,30 +2059,39 @@
       if (elDeposits) elDeposits.innerText = `₹${totalVerifiedDeposits.toFixed(2)}`;
     }
 
-    function saveSupportLinks() {
+    async function saveSupportLinks() {
       STATE.supportLinks.telegram = document.getElementById('adminTelegramInput').value;
       STATE.supportLinks.whatsapp = document.getElementById('adminWhatsappInput').value;
       saveStorage('supportLinks', STATE.supportLinks);
       document.getElementById('playerSupportTelegram').href = STATE.supportLinks.telegram;
       document.getElementById('playerSupportWhatsapp').href = STATE.supportLinks.whatsapp;
-      showToast("Support Links Updated!", "success");
+      if (window.db && window.doc && window.setDoc) {
+        await window.setDoc(window.doc(window.db, "settings", "global"), { supportLinks: STATE.supportLinks }, { merge: true });
+      }
+      showToast("Support Links Synced to Cloud!", "success");
     }
 
-    function saveInstructions() {
+    async function saveInstructions() {
       STATE.roomInstructions = document.getElementById('adminInstructionsInput').value.trim();
       saveStorage('roomInstructions', STATE.roomInstructions);
+      if (window.db && window.doc && window.setDoc) {
+        await window.setDoc(window.doc(window.db, "settings", "global"), { roomInstructions: STATE.roomInstructions }, { merge: true });
+      }
       renderMyMatches();
-      showToast("Match Instructions Updated for all players!", "success");
+      showToast("Match Instructions Synced for all players!", "success");
     }
     
-    function saveCustomAppName() {
+    async function saveCustomAppName() {
       const name = document.getElementById('adminAppNameInput').value.trim();
       if(name) {
         STATE.appName = name;
         saveStorage('appName', STATE.appName);
         document.getElementById('brandNameDisplay').innerText = name;
         document.getElementById('gateBrandTitle').innerText = name;
-        showToast("App Name Updated!", "success");
+        if (window.db && window.doc && window.setDoc) {
+          await window.setDoc(window.doc(window.db, "settings", "global"), { appName: name }, { merge: true });
+        }
+        showToast("App Name Synced to Cloud!", "success");
       }
     }
 
@@ -1784,6 +2101,27 @@
       const name = window.STATE.adminName || "Admin Dewansh";
       const upi = window.STATE.adminUpi || "boohyahx@axl";
       const qr = window.STATE.adminCustomQr || "";
+      const appTitle = window.STATE.appName || "BhooyahX";
+      const rew = window.STATE.referralReward !== undefined ? window.STATE.referralReward : 10;
+
+      const elBrand = document.getElementById('brandNameDisplay');
+      if (elBrand) elBrand.innerText = appTitle;
+      const elGateTitle = document.getElementById('gateBrandTitle');
+      if (elGateTitle) elGateTitle.innerText = appTitle;
+
+      const elRefDisp = document.getElementById('userReferRewardDisplay');
+      if (elRefDisp) elRefDisp.innerText = `₹${rew}`;
+      const elRegBonus = document.getElementById('regReferralBonusLabel');
+      if (elRegBonus && rew > 0) elRegBonus.innerText = `Refer Reward: ₹${rew}`;
+      const elRefInp = document.getElementById('adminReferralRewardInput');
+      if (elRefInp && document.activeElement !== elRefInp) elRefInp.value = rew;
+
+      if (window.STATE.supportLinks) {
+        const tg = document.getElementById('playerSupportTelegram');
+        if (tg) tg.href = window.STATE.supportLinks.telegram;
+        const wa = document.getElementById('playerSupportWhatsapp');
+        if (wa) wa.href = window.STATE.supportLinks.whatsapp;
+      }
 
       // Profile support name
       const elAdminName = document.getElementById('displayAdminName');
@@ -2008,7 +2346,8 @@
         if (adminWdSec) adminWdSec.classList.remove('opacity-50');
         document.getElementById('pendingWithdrawalsCount').innerText = `${STATE.pendingWithdrawals.length} Pending`;
       }
-      showToast("Automation Settings Updated!", "info");
+      if (window.db && window.doc && window.setDoc) { window.setDoc(window.doc(window.db, "settings", "global"), { autoSettings: STATE.autoSettings }, { merge: true }); }
+      showToast("Automation Settings Synced!", "info");
     }
 
     function renderAdminPendingDeposits() {
@@ -2029,11 +2368,30 @@
       `).join('');
     }
 
-    function approveDepositAdmin(idx) {
+    async function approveDepositAdmin(idx) {
       const d = STATE.pendingDeposits[idx];
       if (!d) return;
 
-      // Credit to user
+      if (window.db && window.doc && window.getDoc && window.updateDoc) {
+        try {
+          if (d.id) {
+            await window.updateDoc(window.doc(window.db, "deposits", d.id), { status: "approved" });
+          }
+          if (d.userId && d.userId !== "ADMIN_MASTER") {
+            const userSnap = await window.getDoc(window.doc(window.db, "users", d.userId));
+            if (userSnap.exists()) {
+              const ud = userSnap.data();
+              await window.updateDoc(window.doc(window.db, "users", d.userId), {
+                balance: Number(ud.balance || 0) + Number(d.amount || 0),
+                deposited: Number(ud.deposited || 0) + Number(d.amount || 0)
+              });
+            }
+          }
+        } catch (err) {
+          console.warn("Approve deposit cloud error:", err);
+        }
+      }
+
       if (STATE.currentUser && STATE.currentUser.id === d.userId) {
         STATE.currentUser.balance = (STATE.currentUser.balance || 0) + d.amount;
         STATE.currentUser.deposited = (STATE.currentUser.deposited || 0) + d.amount;
@@ -2080,19 +2438,34 @@
       `).join('');
     }
 
-    function acceptWithdrawalAdmin(idx) {
+    async function acceptWithdrawalAdmin(idx) {
       const w = STATE.pendingWithdrawals[idx];
       if (!w) return;
+      if (window.db && window.doc && window.updateDoc && w.id) {
+        await window.updateDoc(window.doc(window.db, "withdrawals", w.id), { status: "paid" });
+      }
       STATE.pendingWithdrawals.splice(idx, 1);
       saveStorage('pendingWithdrawals', STATE.pendingWithdrawals);
       renderAdminPendingWithdrawals();
       showToast(`Marked ₹${w.amount} paid to ${w.upi}`, "success");
     }
 
-    function rejectWithdrawalAdmin(idx) {
+    async function rejectWithdrawalAdmin(idx) {
       const w = STATE.pendingWithdrawals[idx];
       if (!w) return;
-      // Refund user balance
+      if (window.db && window.doc && window.getDoc && window.updateDoc) {
+        if (w.id) {
+          await window.updateDoc(window.doc(window.db, "withdrawals", w.id), { status: "rejected" });
+        }
+        if (w.userId && w.userId !== "ADMIN_MASTER") {
+          const uSnap = await window.getDoc(window.doc(window.db, "users", w.userId));
+          if (uSnap.exists()) {
+            await window.updateDoc(window.doc(window.db, "users", w.userId), {
+              balance: Number(uSnap.data().balance || 0) + Number(w.amount || 0)
+            });
+          }
+        }
+      }
       if (STATE.currentUser && STATE.currentUser.id === w.userId) {
         STATE.currentUser.balance += w.amount;
         saveStorage('currentUser', STATE.currentUser);
@@ -2114,9 +2487,10 @@
             <b class="text-gray-900">${t.title}</b>
             <div class="text-[10px] text-gray-500">Slots: ${(t.registeredUsers || []).length}/${t.slots || 48} | Win: ₹${t.prize} | <span class="text-brand-red font-bold">Kill: ₹${t.perKill}</span></div>
           </div>
-          <div class="flex gap-1.5">
+          <div class="flex gap-1">
             <button onclick="openDispatchRoomModal('${t.id}')" class="px-2 py-1 bg-brand-orange text-white rounded text-[10px] font-bold shadow-sm">Room Pass</button>
             <button onclick="openDistributeWinnings('${t.id}')" class="px-2 py-1 bg-amber-500 text-white rounded text-[10px] font-bold shadow-sm">Results</button>
+            <button onclick="deleteTournamentAdmin('${t.id}')" class="px-1.5 py-1 bg-red-100 text-red-600 rounded text-[10px] font-bold" title="Delete Match"><i class="ph-bold ph-trash"></i></button>
           </div>
         </div>
       `).join('');
@@ -2124,7 +2498,7 @@
 
     function openCreateTournamentModal() { openModal('createMatchModal'); }
 
-    function saveNewTournament() {
+    async function saveNewTournament() {
       const title = document.getElementById('newMatchTitle').value.trim();
       const mode = document.getElementById('newMatchMode').value;
       const map = document.getElementById('newMatchMap').value;
@@ -2139,23 +2513,50 @@
       }
 
       const customSlots = parseInt(document.getElementById('newMatchSlots').value) || (mode === 'CS' ? 8 : 48);
+      const matchId = "T" + Date.now().toString().slice(-5);
 
-      STATE.tournaments.push({
-        id: "T" + Date.now().toString().slice(-4),
+      const newMatchObj = {
+        id: matchId,
         title, mode, map, fee, prize, perKill,
         slots: customSlots,
         filled: 0,
         time,
         roomId: "LOCKED", roomPass: "LOCKED",
         roomVisible: false,
-        registeredUsers: []
-      });
+        registeredUsers: [],
+        createdAtMs: Date.now()
+      };
 
-      saveStorage('tournaments', STATE.tournaments);
+      // Save to Firebase Firestore so ALL devices see it immediately!
+      if (window.db && window.doc && window.setDoc) {
+        try {
+          await window.setDoc(window.doc(window.db, "tournaments", matchId), newMatchObj);
+          showToast("Tournament Published Live to All Phones!", "success");
+        } catch (err) {
+          console.warn("Firebase save tournament error:", err);
+          showToast("Cloud sync error: " + err.message, "error");
+        }
+      } else {
+        STATE.tournaments.push(newMatchObj);
+        saveStorage('tournaments', STATE.tournaments);
+        renderTournaments();
+        renderAdminTournaments();
+        showToast("Tournament Created!", "success");
+      }
+
       closeModal('createMatchModal');
-      renderTournaments();
-      renderAdminTournaments();
-      showToast("Tournament Created Successfully!", "success");
+    }
+
+    async function deleteTournamentAdmin(id) {
+      if (!confirm("Kya aap is match ko delete karna chahte hain?")) return;
+      if (window.db && window.doc && window.deleteDoc) {
+        try {
+          await window.deleteDoc(window.doc(window.db, "tournaments", id));
+          showToast("Tournament deleted from all devices!", "info");
+        } catch (err) {
+          showToast("Delete error: " + err.message, "error");
+        }
+      }
     }
     
     // ROOM DISPATCH
@@ -2169,23 +2570,28 @@
       openModal('dispatchRoomModal');
     }
     
-    function confirmRoomDispatch() {
+    async function confirmRoomDispatch() {
       const id = document.getElementById('dispatchMatchId').value;
-      const rid = document.getElementById('dispatchRoomIdInput').value;
-      const rpass = document.getElementById('dispatchRoomPassInput').value;
+      const rid = document.getElementById('dispatchRoomIdInput').value.trim();
+      const rpass = document.getElementById('dispatchRoomPassInput').value.trim();
       const vis = document.getElementById('dispatchRoomVisibleCheck').checked;
       
-      const match = STATE.tournaments.find(m => m.id === id);
-      if(match) {
-        match.roomId = rid; match.roomPass = rpass; match.roomVisible = vis;
-        saveStorage('tournaments', STATE.tournaments);
-        showToast("Room credentials updated!", "success");
-        closeModal('dispatchRoomModal');
-        renderMyMatches();
+      if (window.db && window.doc && window.updateDoc) {
+        try {
+          await window.updateDoc(window.doc(window.db, "tournaments", id), {
+            roomId: rid || "LOCKED",
+            roomPass: rpass || "LOCKED",
+            roomVisible: vis
+          });
+          showToast("Room credentials synced live to all joined players!", "success");
+          closeModal('dispatchRoomModal');
+        } catch (err) {
+          showToast("Error updating room: " + err.message, "error");
+        }
       }
     }
 
-    // MULTI-PLAYER WINNINGS DISTRIBUTION (REAL MONEY WALLET TRANSFER)
+    // MULTI-PLAYER WINNINGS DISTRIBUTION (REAL MONEY WALLET TRANSFER VIA FIRESTORE)
     function openDistributeWinnings(id) {
       const match = STATE.tournaments.find(m => m.id === id);
       if(!match) return;
@@ -2225,33 +2631,37 @@
       document.getElementById('rewardKills').value = "";
     }
 
-    function confirmDistributeWinnings() {
+    async function confirmDistributeWinnings() {
       if(STATE.pendingWinningsList.length === 0) return showToast("Add players to the list first!", "error");
       
       const totalAmount = STATE.pendingWinningsList.reduce((acc, curr) => acc + curr.total, 0);
       
-      // If current logged-in user is one of the winners, credit their wallet with real money
-      STATE.pendingWinningsList.forEach(p => {
-        if (STATE.currentUser && (p.uid === STATE.currentUser.uid || p.uid === STATE.currentUser.id)) {
-          STATE.currentUser.balance = (STATE.currentUser.balance || 0) + p.total;
-          STATE.currentUser.won = (STATE.currentUser.won || 0) + p.total;
-          saveStorage('currentUser', STATE.currentUser);
-          
-          STATE.transactions.unshift({
-            id: "tx_" + Date.now(),
-            title: `Match Winnings + ${p.kills} Kills Payout`,
-            amount: p.total,
-            type: "winning",
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          });
-          saveStorage('transactions', STATE.transactions);
+      // Credit each winner directly in Firestore users collection
+      if (window.db && window.collection && window.query && window.where && window.getDocs && window.updateDoc && window.doc) {
+        for (const p of STATE.pendingWinningsList) {
+          try {
+            const q = window.query(window.collection(window.db, "users"), window.where("ff_uid", "==", p.uid));
+            const snap = await window.getDocs(q);
+            if (!snap.empty) {
+              const userDoc = snap.docs[0];
+              const ud = userDoc.data();
+              const newBal = Number(ud.balance || 0) + p.total;
+              const newWon = Number(ud.won || 0) + p.total;
+              await window.updateDoc(window.doc(window.db, "users", userDoc.id), {
+                balance: newBal,
+                won: newWon
+              });
+            }
+          } catch (e) {
+            console.warn("Payout error for UID " + p.uid, e);
+          }
         }
-      });
+      }
       
       renderHeader();
       renderWallet();
       updateAdminFinancials();
-      showToast(`Success: Distributed ₹${totalAmount} to ${STATE.pendingWinningsList.length} players!`, "success");
+      showToast(`Success: Distributed ₹${totalAmount} to ${STATE.pendingWinningsList.length} players in Cloud!`, "success");
       closeModal('distributeWinningsModal');
     }
 
@@ -2281,7 +2691,7 @@
       }
     }
     
-    function confirmJoinTournamentAction() {
+    async function confirmJoinTournamentAction() {
       const match = STATE.tournaments.find(m => m.id === currentJoinId);
       if(!match) return;
 
@@ -2300,11 +2710,6 @@
         return;
       }
 
-      STATE.currentUser.balance -= match.fee;
-      STATE.currentUser.ign = ign;
-      STATE.currentUser.uid = uid;
-      saveStorage('currentUser', STATE.currentUser);
-      
       const totalSlots = match.slots || 48;
       if ((match.registeredUsers || []).length >= totalSlots) {
         showToast("Maaf kijiye, saare slots bhar chuke hain!", "error");
@@ -2312,9 +2717,39 @@
         return;
       }
 
-      if (!match.registeredUsers.includes(STATE.currentUser.id)) {
-        match.registeredUsers.push(STATE.currentUser.id);
-        match.filled = (match.registeredUsers || []).length;
+      const newBalance = (STATE.currentUser.balance || 0) - match.fee;
+      STATE.currentUser.balance = newBalance;
+      STATE.currentUser.ign = ign;
+      STATE.currentUser.uid = uid;
+      saveStorage('currentUser', STATE.currentUser);
+
+      // Update user balance in Firestore
+      if (window.db && window.doc && window.updateDoc && STATE.currentUser.id !== "ADMIN_MASTER") {
+        try {
+          await window.updateDoc(window.doc(window.db, "users", STATE.currentUser.id), {
+            balance: newBalance,
+            ign: ign,
+            ff_uid: uid
+          });
+        } catch (e) { console.warn("User balance update error:", e); }
+      }
+
+      // Update tournament registeredUsers in Firestore
+      const updatedUsers = [...(match.registeredUsers || [])];
+      if (!updatedUsers.includes(STATE.currentUser.id)) {
+        updatedUsers.push(STATE.currentUser.id);
+      }
+
+      if (window.db && window.doc && window.updateDoc) {
+        try {
+          await window.updateDoc(window.doc(window.db, "tournaments", match.id), {
+            registeredUsers: updatedUsers,
+            filled: updatedUsers.length
+          });
+        } catch (e) { console.warn("Tournament join sync error:", e); }
+      } else {
+        match.registeredUsers = updatedUsers;
+        match.filled = updatedUsers.length;
         saveStorage('tournaments', STATE.tournaments);
       }
 
@@ -2342,7 +2777,7 @@
       generateDynamicUPIQR();
       openModal('addMoneyModal'); 
     }
-    function submitDepositPayment() {
+    async function submitDepositPayment() {
       const amt = parseFloat(document.getElementById('depositAmountInput').value) || 0;
       const utr = document.getElementById('depositUtrInput').value.trim();
 
@@ -2352,10 +2787,18 @@
       }
 
       if(STATE.autoSettings.deposit) {
-        // Automatic Instant Real Credit
-        STATE.currentUser.balance = (STATE.currentUser.balance || 0) + amt;
-        STATE.currentUser.deposited = (STATE.currentUser.deposited || 0) + amt;
+        const newBal = (STATE.currentUser.balance || 0) + amt;
+        const newDep = (STATE.currentUser.deposited || 0) + amt;
+        STATE.currentUser.balance = newBal;
+        STATE.currentUser.deposited = newDep;
         saveStorage('currentUser', STATE.currentUser);
+
+        if (window.db && window.doc && window.updateDoc && STATE.currentUser.id !== "ADMIN_MASTER") {
+          await window.updateDoc(window.doc(window.db, "users", STATE.currentUser.id), {
+            balance: newBal,
+            deposited: newDep
+          });
+        }
 
         STATE.transactions.unshift({
           id: "tx_" + Date.now(),
@@ -2371,14 +2814,22 @@
         updateAdminFinancials();
         showToast(`₹${amt} Auto-Approved & Added to Wallet!`, "success");
       } else {
-        // Manual Admin Approval Queue
-        STATE.pendingDeposits.push({
+        const depId = "DEP_" + Date.now();
+        const depObj = {
+          id: depId,
           userId: STATE.currentUser.id,
           username: STATE.currentUser.username,
           amount: amt,
-          utr: utr
-        });
-        saveStorage('pendingDeposits', STATE.pendingDeposits);
+          utr: utr,
+          status: "pending",
+          createdAtMs: Date.now()
+        };
+        if (window.db && window.doc && window.setDoc) {
+          await window.setDoc(window.doc(window.db, "deposits", depId), depObj);
+        } else {
+          STATE.pendingDeposits.push(depObj);
+          saveStorage('pendingDeposits', STATE.pendingDeposits);
+        }
         showToast("Deposit submitted! Balance will update after Admin verifies.", "info");
       }
 
@@ -2392,7 +2843,7 @@
       openModal('withdrawModal');
     }
 
-    function confirmWithdrawalRequest() {
+    async function confirmWithdrawalRequest() {
       const amt = parseFloat(document.getElementById('withdrawAmountInput').value) || 0;
       const upi = document.getElementById('withdrawUpiInput').value.trim();
 
@@ -2409,8 +2860,13 @@
         return;
       }
 
-      STATE.currentUser.balance -= amt;
+      const newBal = (STATE.currentUser.balance || 0) - amt;
+      STATE.currentUser.balance = newBal;
       saveStorage('currentUser', STATE.currentUser);
+
+      if (window.db && window.doc && window.updateDoc && STATE.currentUser.id !== "ADMIN_MASTER") {
+        await window.updateDoc(window.doc(window.db, "users", STATE.currentUser.id), { balance: newBal });
+      }
 
       STATE.transactions.unshift({
         id: "tx_" + Date.now(),
@@ -2427,13 +2883,22 @@
       if(STATE.autoSettings.withdraw) {
         showToast(`₹${amt} Auto-Processed & Transferred to ${upi}!`, "success");
       } else {
-        STATE.pendingWithdrawals.push({
+        const wdId = "WD_" + Date.now();
+        const wdObj = {
+          id: wdId,
           userId: STATE.currentUser.id,
           username: STATE.currentUser.username,
           amount: amt,
-          upi: upi
-        });
-        saveStorage('pendingWithdrawals', STATE.pendingWithdrawals);
+          upi: upi,
+          status: "pending",
+          createdAtMs: Date.now()
+        };
+        if (window.db && window.doc && window.setDoc) {
+          await window.setDoc(window.doc(window.db, "withdrawals", wdId), wdObj);
+        } else {
+          STATE.pendingWithdrawals.push(wdObj);
+          saveStorage('pendingWithdrawals', STATE.pendingWithdrawals);
+        }
         showToast("Withdrawal requested! Sent to Admin queue.", "info");
       }
 
